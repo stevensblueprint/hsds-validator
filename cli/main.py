@@ -1,5 +1,7 @@
-def main():
-    print("Hello from openreferral-transformer!")
+# Set up command line arguments.
+
+def main(input_filepath, schema_filepath, save):
+    print("Hello from the HSDS Validator!")
 
 
 if __name__ == "__main__":
