@@ -8,4 +8,3 @@ def validate(json_data, json_schema) -> dict:
 
 def generate_models(json_schema):
     # Generate pydantic models from json schema
-    return
