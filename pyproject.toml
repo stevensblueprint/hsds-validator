@@ -1,7 +1,7 @@
 [project]
 name = "hsds-validator"
 version = "0.1.0"
-description = "HSDS Validator verifing provided files comply with the HSDS specification."
+description = "HSDS Validator verifying provided files comply with HSDS specification."
 requires-python = ">=3.13"
 dependencies = []
 
