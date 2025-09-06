@@ -25,10 +25,14 @@ def validate(
    """
    # Basic input validation
    if not input_dir:
-       raise HTTPException(status_code=400, detail="ZIP file is required")
+      raise HTTPException(status_code=400, detail="ZIP file is required")
   
    if not json_schema:
-       raise HTTPException(status_code=400, detail="JSON schema is required")
+      raise HTTPException(status_code=400, detail="JSON schema is required")
+   
+   # Validate that uploaded file is a ZIP
+   if not input_dir.filename.lower().endswith('.zip'):
+      raise HTTPException(status_code=400, detail="Uploaded input_dir file must be a ZIP file")
   
    return {"success": True}
 
