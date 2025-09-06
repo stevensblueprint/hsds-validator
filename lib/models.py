@@ -3,334 +3,334 @@ from typing import List, Optional
 
 '''
 Pydantic Models for the current HSDS 3.1 standard.
-
-**Currently, counts optional fields as required**
-
+Schema reference: https://docs.openreferral.org/en/3.1/hsds/schema_reference.html
+Specification Github: https://github.com/openreferral/specification/tree/3.1/schema
 '''
-## Four Core Objects
+
+# Four Core Objects
 
 class Organization(BaseModel):
     id: str # required
     name: str # required
-    alternate_name: str
+    alternate_name: Optional[str] = None
     description: str # required
-    email: str
-    website: str
+    email: Optional[str] = None
+    website: Optional[str] = None
     additional_websites: List[URL]
-    tax_status: str
-    id: str
-    tax_id: str
-    year_incorporated: int
-    legal_status: str
-    logo: str
-    uri: str
-    parent_organization_id: str
-    funding: List[Funding]
-    contacts: List[Contact]
-    phones: List[Phone]
-    locations: List[Location]
-    programs: List[Program]
-    prganization_identifiers: List[Organization_Identifier]
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    tax_status: Optional[str] = None
+    id: Optional[str] = None
+    tax_id: Optional[str] = None
+    year_incorporated: Optional[int] = None
+    legal_status: Optional[str] = None
+    logo: Optional[str] = None
+    uri: Optional[str] = None
+    parent_organization_id: Optional[str] = None
+    funding: Optional[List[Funding]] = None
+    contacts: Optional[List[Contact]] = None
+    phones: Optional[List[Phone]] = None
+    locations: Optional[List[Location]] = None
+    programs: Optional[List[Programs]] = None
+    prganization_identifiers: Optional[List[Organization_Identifier]] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Service(BaseModel):
-    id: str
-    name: str
-    alternate_name: str
-    description: str
-    url: str
+    id: str # required
+    name: str # required
+    alternate_name: Optional[str] = None
+    description: Optional[str] = None
+    url: Optional[str] = None
     additional_urls: List[URL]
-    email: str
-    status: str
-    interpretation_services: str
-    application_process: str
-    fees_description: str
-    wait_time: str
-    fees: str
-    accreditations: str
-    eligibility_description: str
-    minimum_age: int
-    maximum_age: int
-    assurer_date: str
-    assurer_email: str
-    licenses: str
-    alert: str
-    last_modified: str # format datetime
-    phones: List[Phone]
-    schedules: List[Schedule]
-    service_areas: List[Service_Area]
-    service_at_locations: List[Service_At_Location]
-    languages: List[Language]
-    organization: Organization
-    funding: List[Funding]
-    cost_options: List[Cost_Option]
-    program: Program
-    required_documents: List[Required_Document]
-    contacts: List[Contacts]
-    capacities: List[Service_Capacity]
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    email: Optional[str] = None
+    status: str # required
+    interpretation_services: Optional[str] = None
+    application_process: Optional[str] = None
+    fees_description: Optional[str] = None
+    wait_time: Optional[str] = None
+    fees: Optional[str] = None
+    accreditations: Optional[str] = None
+    eligibility_description: Optional[str] = None
+    minimum_age: Optional[int] = None
+    maximum_age: Optional[int] = None
+    assurer_date: Optional[str] = None
+    assurer_email: Optional[str] = None
+    licenses: Optional[str] = None
+    alert: Optional[str] = None
+    last_modified: Optional[str] = None # format datetime
+    phones: Optional[List[Phone]] = None
+    schedules: Optional[List[Schedule]] = None
+    service_areas: Optional[List[Service_Area]] = None
+    service_at_locations: Optional[List[Service_At_Location]] = None
+    languages: Optional[List[Language]] = None
+    organization: Optional[Organization] = None
+    funding: Optional[List[Funding]] = None
+    cost_options: Optional[List[Cost_Option]] = None
+    program: Optional[Program] = None
+    required_documents: Optional[List[Required_Document]] = None
+    contacts: Optional[List[Contacts]] = None
+    capacities: Optional[List[Service_Capacity]] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Location(BaseModel):
-    id: str
-    location_type: str
-    url: str
-    name: str
-    alternative_name: str
-    description: str
-    transportation: str
-    latitude: int
-    longitude: int
-    external_identifier: str
-    external_identifier_type: str
-    languages: List[Language]
-    addresses: List[Address]
-    contacts: List[Contact]
-    accessibility: List[Accessibility]
-    phones: List[Phone]
-    schedules: List[Schedules]
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    location_type: str # required
+    url: Optional[str] = None
+    name: Optional[str] = None
+    alternative_name: Optional[str] = None
+    description: Optional[str] = None
+    transportation: Optional[str] = None
+    latitude: Optional[str] = None
+    longitude: Optional[str] = None
+    external_identifier: Optional[str] = None
+    external_identifier_type: Optional[str] = None
+    languages: Optional[List[Language]] = None
+    addresses: Optional[List[Address]] = None
+    contacts: Optional[List[Contact]] = None
+    accessibility: Optional[List[Accessibility]] = None
+    phones: Optional[List[Phone]] = None
+    schedules: Optional[List[Schedule]] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Service_At_Location(BaseModel):
-    id: str
-    service_id: str
-    description: str
-    service_areas: List[Service_Area]
-    contacts: List[Contact]
-    phones: List[Phone]
-    schedules: List[Schedules]
-    location: Location
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    description: Optional[str] = None
+    service_areas: Optional[List[Service_Area]] = None
+    contacts: Optional[List[Contact]] = None
+    phones: Optional[List[Phone]] = None
+    schedules: Optional[List[Schedule]] = None
+    location: Optional[Location] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
-## Rest of the objects
+# Rest of the objects
 
 class Address(BaseModel):
-    id: str
-    location_id: str
-    attention: str
-    address_1: str
-    address_2: str
-    city: str
-    region: str
-    state_province: str
-    postal_code: str
-    country: str
-    address_type: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    location_id: Optional[str] = None
+    attention: Optional[str] = None
+    address_1: str # required
+    address_2: Optional[str] = None
+    city: str # required
+    region: Optional[str] = None
+    state_province: str # required
+    postal_code: str # required
+    country: str # required
+    address_type: str # required
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Phone(BaseModel):
-    id: str
-    location_id: str
-    service_id: str
-    organization_id: str
-    contact_id: str
-    service_at_location_id: str
-    number: str
-    extension: int
-    type: str
-    description: str
-    languages: List[Language]
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    location_id: Optional[str] = None
+    service_id: Optional[str] = None
+    organization_id: Optional[str] = None
+    contact_id: Optional[str] = None
+    service_at_location_id: Optional[str] = None
+    number: str # required
+    extension: Optional[int] = None
+    type: Optional[str] = None
+    description: Optional[str] = None
+    languages: Optional[List[Language]] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Schedule(BaseModel): 
-    id: str
-    service_id: str
-    location_id: str
-    service_at_location_id: str
-    valid_from: str
-    valid_to: str
-    dtstart: str
-    timezone: int
-    until: str
-    count: int
-    wkst: str
-    freq: str
-    interval: int
-    byday: str
-    byweekno: str
-    bymonthday: str
-    byyearday: str
-    description: str
-    opens_at: str
-    closes_at: str
-    schedule_link: str
-    attending_type: str
-    notes: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    location_id: Optional[str] = None
+    service_at_location_id: Optional[str] = None
+    valid_from: Optional[str] = None
+    valid_to: Optional[str] = None
+    dtstart: Optional[str] = None
+    timezone: Optional[int] = None
+    until: Optional[str] = None
+    count: Optional[int] = None
+    wkst: Optional[str] = None
+    freq: Optional[str] = None
+    interval: Optional[int] = None
+    byday: Optional[str] = None
+    byweekno: Optional[str] = None
+    bymonthday: Optional[str] = None
+    byyearday: Optional[str] = None
+    description: Optional[str] = None
+    opens_at: Optional[str] = None
+    closes_at: Optional[str] = None
+    schedule_link: Optional[str] = None
+    attending_type: Optional[str] = None
+    notes: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Service_Area(BaseModel):
-    id: str
-    service_id: str
-    service_at_location_id: str
-    name: str
-    description: str
-    extent: str
-    extent_type: str
-    uri: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    service_at_location_id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    extent: Optional[str] = None
+    extent_type: Optional[str] = None
+    uri: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Language(BaseModel):
-    id: str
-    service_id: str
-    location_id: str
-    phone_id: str
-    name: str
-    code: str
-    note: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    location_id: Optional[str] = None
+    phone_id: Optional[str] = None
+    name: Optional[str] = None
+    code: Optional[str] = None
+    note: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Funding(BaseModel):
-    id: str
-    organization_id: str
-    service_id: str
-    source: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    organization_id: Optional[str] = None
+    service_id: Optional[str] = None
+    source: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Accessibility(BaseModel):
-    id: str
-    location_id: str
-    description: str
-    details: str
-    url: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    location_id: Optional[str] = None
+    description: Optional[str] = None
+    details: Optional[str] = None
+    url: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Cost_Option(BaseModel):
-    id: str
-    service_id: str
-    valid_from: str
-    valid_to: str
-    option: str
-    currency: str
-    amount: int
-    amount_description: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    valid_from: Optional[str] = None
+    valid_to: Optional[str] = None
+    option: Optional[str] = None
+    currency: Optional[str] = None
+    amount: Optional[int] = None
+    amount_description: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Program(BaseModel):
-    id: str
-    organization_id: str
-    name: str
-    alternate_name: str
-    description: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    organization_id: Optional[str] = None
+    name: str # required
+    alternate_name: Optional[str] = None
+    description: str # required
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Required_Document(BaseModel):
-    id: str
-    service_id: str
-    document: str
-    uri: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    document: Optional[str] = None
+    uri: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Contact(BaseModel):
-    id: str
-    organization_id: str
-    service_id: str
-    service_at_location_id: str
-    location_id: str
-    name: str
-    title: str
-    department: str
-    email: str
-    phones: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    organization_id: Optional[str] = None
+    service_id: Optional[str] = None
+    service_at_location_id: Optional[str] = None
+    location_id: Optional[str] = None
+    name: Optional[str] = None
+    title: Optional[str] = None
+    department: Optional[str] = None
+    email: Optional[str] = None
+    phones: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Organization_Identifier(BaseModel):
-    id: str
-    organization_id: str
-    identifier_scheme: str
-    identifier_type: str
-    identifier: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    organization_id: Optional[str] = None
+    identifier_scheme: Optional[str] = None
+    identifier_type: str # required
+    identifier: str # required
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Unit(BaseModel):
-    id: str
-    name: str
-    scheme: str
-    identifier: str
-    uri: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    name: str # required
+    scheme: Optional[str] = None
+    identifier: Optional[str] = None
+    uri: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Service_Capacity(BaseModel):
-    id: str
-    service_id: str
-    unit: Unit
-    available: int
-    maximum: int
-    description: str
-    updated: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    service_id: Optional[str] = None
+    unit: Unit # required
+    available: int # required
+    maximum: Optional[int] = None
+    description: Optional[str] = None
+    updated: str # required
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Attribute(BaseModel):
-    id: str
-    link_id: str
-    link_type: str
-    link_entity: str
-    value: str
-    taxonomy_term: taxonomy_term
-    metadata: List[Metadata]
-    label: str
+    id: str # required
+    link_id: Optional[str] = None
+    link_type: Optional[str] = None
+    link_entity: Optional[str] = None
+    value: Optional[str] = None
+    taxonomy_term: Optional[List[Taxonomy_Term]] = None
+    metadata: Optional[List[Metadata]] = None
+    label: Optional[str] = None
 
 class URL(BaseModel):
-    id: str
-    label: str
-    url: str
-    organization_id: str
-    service_id: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    label: Optional[str] = None
+    url: str # required
+    organization_id: Optional[str] = None
+    service_id: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Metadata(BaseModel):
-    id: str
-    resource_id: str
-    resource_type: str
-    last_action_date: str
-    last_action_type: str
-    field_name: str
-    previous_value: str
-    replacement_value: str
-    updated_by: str
+    id: str # required
+    resource_id: Optional[str] = None
+    resource_type: Optional[str] = None
+    last_action_date: str # required
+    last_action_type: str # required
+    field_name: str # required
+    previous_value: str # required
+    replacement_value: str # required
+    updated_by: str # required
 
 class Meta_Table_Description(BaseModel):
-    id: str
-    name: str
-    language: str
-    character_set: str
-    attributes: List[Attribute]
-    metadata: List[Metadata]
+    id: str # required
+    name: Optional[str] = None
+    language: Optional[str] = None
+    character_set: Optional[str] = None
+    attributes: Optional[List[Attribute]] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Taxonomy(BaseModel):
-    id: str
-    name: str
-    description: str
-    uri: str
-    version: str
-    metadata: List[Metadata]
+    id: str # required
+    name: str # required
+    description: str # required
+    uri: Optional[str] = None
+    version: Optional[str] = None
+    metadata: Optional[List[Metadata]] = None
 
 class Taxonomy_Term(BaseModel):
-    id: str
-    code: str
-    name: str
-    description: str
-    parent_id: str
-    taxonomy: Taxonomy
-    taxonomy_detail: str
-    language: str
-    taxonomy_id: str
-    term_uri: str
-    metadata: List[Metadata]
+    id: str # required
+    code: Optional[str] = None
+    name: str # required
+    description: str # required
+    parent_id: Optional[str] = None
+    taxonomy: Optional[Taxonomy] = None
+    taxonomy_detail: Optional[str] = None
+    language: Optional[str] = None
+    taxonomy_id: Optional[str] = None
+    term_uri: Optional[str] = None
+    metadata: Optional[List[Metadata]] = None
