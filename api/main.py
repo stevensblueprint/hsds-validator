@@ -1,5 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import uvicorn
+import json
+import zipfile
+import io
+from jsonschema import validate as js_validate, ValidationError
 app = FastAPI()
 
 
@@ -33,9 +37,48 @@ def validate(
    # Validate that uploaded file is a ZIP
    if not input_dir.filename.lower().endswith('.zip'):
       raise HTTPException(status_code=400, detail="Uploaded input_dir file must be a ZIP file")
-  
-   return {"success": True}
+   
+   # Load JSON schema
+   try:
+      schema = json.load(json_schema.file)
+   except Exception as e:
+      raise HTTPException(status_code=400, detail=f"Invalid JSON schema: {str(e)}")
+   
+   # Unzip files and validate
+   try:
+      zip_bytes = input_dir.file.read()
+      with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
+         file_list = z.namelist()
+         if not file_list:
+               raise HTTPException(status_code=400, detail="ZIP file is empty")
+         
+         errors = []
+         for fname in file_list:
+               if fname.endswith('/'):  # skip directories
+                  continue
 
+               print(f"Processing file: {fname}") # debug
+
+               if not fname.endswith('.json'):  # Add error for non-JSON files
+                    errors.append(f"{fname}: Not a JSON file")
+                    continue
+               try:
+                  with z.open(fname) as f:
+                     data = json.load(f)
+                     js_validate(instance=data, schema=schema)
+               except ValidationError as ve: # Add error if validation fails
+                  errors.append(f"{fname}: {ve.message}")
+               except Exception as e:
+                  errors.append(f"{fname}: {str(e)}")
+         
+         if errors:
+               return {"success": False, "errors": errors}
+         return {"success": True}
+         
+   except zipfile.BadZipFile:
+      raise HTTPException(status_code=400, detail="Invalid ZIP file")
+   except Exception as e:
+      raise HTTPException(status_code=500, detail=str(e))
 
 def main():
    uvicorn.run(app, host="0.0.0.0", port=8000)
