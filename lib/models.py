@@ -5,15 +5,17 @@ from typing import List, Optional
 Pydantic Models for the current HSDS 3.1 standard.
 Schema reference: https://docs.openreferral.org/en/3.1/hsds/schema_reference.html
 Specification Github: https://github.com/openreferral/specification/tree/3.1/schema
+
+Any field not specified as optional is required.
 '''
 
 # Four Core Objects
 
 class Organization(BaseModel):
-    id: str # required
-    name: str # required
+    id: str 
+    name: str 
     alternate_name: Optional[str] = None
-    description: str # required
+    description: str 
     email: Optional[str] = None
     website: Optional[str] = None
     additional_websites: List[URL]
@@ -35,14 +37,14 @@ class Organization(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Service(BaseModel):
-    id: str # required
-    name: str # required
+    id: str 
+    name: str 
     alternate_name: Optional[str] = None
     description: Optional[str] = None
     url: Optional[str] = None
     additional_urls: List[URL]
     email: Optional[str] = None
-    status: str # required
+    status: str 
     interpretation_services: Optional[str] = None
     application_process: Optional[str] = None
     fees_description: Optional[str] = None
@@ -73,8 +75,8 @@ class Service(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Location(BaseModel):
-    id: str # required
-    location_type: str # required
+    id: str 
+    location_type: str 
     url: Optional[str] = None
     name: Optional[str] = None
     alternative_name: Optional[str] = None
@@ -94,7 +96,7 @@ class Location(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Service_At_Location(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     description: Optional[str] = None
     service_areas: Optional[List[Service_Area]] = None
@@ -108,28 +110,28 @@ class Service_At_Location(BaseModel):
 # Rest of the objects
 
 class Address(BaseModel):
-    id: str # required
+    id: str 
     location_id: Optional[str] = None
     attention: Optional[str] = None
-    address_1: str # required
+    address_1: str 
     address_2: Optional[str] = None
-    city: str # required
+    city: str 
     region: Optional[str] = None
-    state_province: str # required
-    postal_code: str # required
-    country: str # required
-    address_type: str # required
+    state_province: str
+    postal_code: str
+    country: str
+    address_type: str
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
 class Phone(BaseModel):
-    id: str # required
+    id: str 
     location_id: Optional[str] = None
     service_id: Optional[str] = None
     organization_id: Optional[str] = None
     contact_id: Optional[str] = None
     service_at_location_id: Optional[str] = None
-    number: str # required
+    number: str 
     extension: Optional[int] = None
     type: Optional[str] = None
     description: Optional[str] = None
@@ -138,7 +140,7 @@ class Phone(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Schedule(BaseModel): 
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     location_id: Optional[str] = None
     service_at_location_id: Optional[str] = None
@@ -165,7 +167,7 @@ class Schedule(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Service_Area(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     service_at_location_id: Optional[str] = None
     name: Optional[str] = None
@@ -177,7 +179,7 @@ class Service_Area(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Language(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     location_id: Optional[str] = None
     phone_id: Optional[str] = None
@@ -188,7 +190,7 @@ class Language(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Funding(BaseModel):
-    id: str # required
+    id: str 
     organization_id: Optional[str] = None
     service_id: Optional[str] = None
     source: Optional[str] = None
@@ -196,7 +198,7 @@ class Funding(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Accessibility(BaseModel):
-    id: str # required
+    id: str
     location_id: Optional[str] = None
     description: Optional[str] = None
     details: Optional[str] = None
@@ -205,7 +207,7 @@ class Accessibility(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Cost_Option(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     valid_from: Optional[str] = None
     valid_to: Optional[str] = None
@@ -217,16 +219,16 @@ class Cost_Option(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Program(BaseModel):
-    id: str # required
+    id: str 
     organization_id: Optional[str] = None
-    name: str # required
+    name: str 
     alternate_name: Optional[str] = None
-    description: str # required
+    description: str 
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
 class Required_Document(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
     document: Optional[str] = None
     uri: Optional[str] = None
@@ -234,7 +236,7 @@ class Required_Document(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Contact(BaseModel):
-    id: str # required
+    id: str 
     organization_id: Optional[str] = None
     service_id: Optional[str] = None
     service_at_location_id: Optional[str] = None
@@ -248,17 +250,17 @@ class Contact(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Organization_Identifier(BaseModel):
-    id: str # required
+    id: str
     organization_id: Optional[str] = None
     identifier_scheme: Optional[str] = None
-    identifier_type: str # required
-    identifier: str # required
+    identifier_type: str 
+    identifier: str 
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
 class Unit(BaseModel):
-    id: str # required
-    name: str # required
+    id: str 
+    name: str 
     scheme: Optional[str] = None
     identifier: Optional[str] = None
     uri: Optional[str] = None
@@ -266,18 +268,18 @@ class Unit(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Service_Capacity(BaseModel):
-    id: str # required
+    id: str 
     service_id: Optional[str] = None
-    unit: Unit # required
-    available: int # required
+    unit: Unit 
+    available: int 
     maximum: Optional[int] = None
     description: Optional[str] = None
-    updated: str # required
+    updated: str 
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
 class Attribute(BaseModel):
-    id: str # required
+    id: str 
     link_id: Optional[str] = None
     link_type: Optional[str] = None
     link_entity: Optional[str] = None
@@ -287,27 +289,27 @@ class Attribute(BaseModel):
     label: Optional[str] = None
 
 class URL(BaseModel):
-    id: str # required
+    id: str 
     label: Optional[str] = None
-    url: str # required
+    url: str 
     organization_id: Optional[str] = None
     service_id: Optional[str] = None
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
 class Metadata(BaseModel):
-    id: str # required
+    id: str 
     resource_id: Optional[str] = None
     resource_type: Optional[str] = None
-    last_action_date: str # required
-    last_action_type: str # required
-    field_name: str # required
-    previous_value: str # required
-    replacement_value: str # required
-    updated_by: str # required
+    last_action_date: str 
+    last_action_type: str 
+    field_name: str 
+    previous_value: str 
+    replacement_value: str 
+    updated_by: str
 
 class Meta_Table_Description(BaseModel):
-    id: str # required
+    id: str
     name: Optional[str] = None
     language: Optional[str] = None
     character_set: Optional[str] = None
@@ -315,18 +317,18 @@ class Meta_Table_Description(BaseModel):
     metadata: Optional[List[Metadata]] = None
 
 class Taxonomy(BaseModel):
-    id: str # required
-    name: str # required
-    description: str # required
+    id: str 
+    name: str 
+    description: str 
     uri: Optional[str] = None
     version: Optional[str] = None
     metadata: Optional[List[Metadata]] = None
 
 class Taxonomy_Term(BaseModel):
-    id: str # required
+    id: str
     code: Optional[str] = None
-    name: str # required
-    description: str # required
+    name: str 
+    description: str 
     parent_id: Optional[str] = None
     taxonomy: Optional[Taxonomy] = None
     taxonomy_detail: Optional[str] = None
