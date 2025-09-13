@@ -57,6 +57,17 @@ def validate(
                if fname.endswith('/'):  # skip directories
                   continue
 
+               if (fname.startswith('__MACOSX/') or  # skip system files
+                   fname.endswith('.DS_Store') or
+                   fname.startswith('.') or
+                   '/.DS_Store' in fname or
+                   '/._' in fname or
+                   fname.endswith('Thumbs.db') or
+                   fname.endswith('desktop.ini') or
+                   '/Thumbs.db' in fname or
+                   '/desktop.ini' in fname):
+                  continue
+
                print(f"Processing file: {fname}") # debug
 
                if not fname.endswith('.json'):  # Add error for non-JSON files
