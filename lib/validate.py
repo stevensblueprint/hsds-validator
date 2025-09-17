@@ -20,19 +20,56 @@ def validate_file_not_empty(filepath: str) -> bool:
     """
     Check if a file has content (not empty).
     
+    A file is considered "empty" if it contains only:
+    - Empty JSON objects: {}
+    - Empty JSON arrays: []
+    - Whitespace around empty JSON structures
+    
     Args:
         filepath (str): Path to the file to check
         
     Returns:
-        bool: True if file has content (size > 0), False if empty
+        bool: True if file has content, False if empty
         
     Raises:
         FileNotFoundError: If file doesn't exist
         OSError: If there's an error accessing the file
     """
     try:
+        # First check if file has any content at all
         file_size = os.path.getsize(filepath)
-        return file_size > 0
+        if file_size == 0:
+            return False
+            
+        # Read and parse the JSON to check if it's "meaningfully empty"
+        with open(filepath, 'r', encoding='utf-8') as file:
+            content = file.read().strip()
+            
+        # Check if content is empty after stripping whitespace
+        if not content:
+            return False
+            
+        # Try to parse as JSON
+        try:
+            parsed_data = json.loads(content)
+            
+            # Check if it's an empty object or array
+            if parsed_data == {} or parsed_data == []:
+                return False
+                
+            # If it's a dict or list, check if it has any meaningful content
+            if isinstance(parsed_data, dict):
+                return len(parsed_data) > 0
+            elif isinstance(parsed_data, list):
+                return len(parsed_data) > 0
+            else:
+                # Other types (string, number, boolean, null) are considered content
+                return True
+                
+        except json.JSONDecodeError:
+            # If it's not valid JSON, consider it as having content
+            return True
+            
     except (FileNotFoundError, OSError) as e:
         raise e
 
