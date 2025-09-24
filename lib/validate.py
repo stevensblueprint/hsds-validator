@@ -1,13 +1,16 @@
 from pydantic import BaseModel, ValidationError
 import json
 
+from lib.models import Organization
+
 def validate(json_data: dict, json_schema: dict) -> dict:
     """
     Validate JSON data against a JSON schema using Pydantic.
     """
     # generate_models does not currently function
-    # Todo: Include in generate_model the config to forbid extra fields
-    model = generate_models(json_schema)
+    # Include in generate_model the config to forbid extra fields
+    # For now, we will directly use the Organization model
+    model = Organization
     json_data_str = json.dumps(json_data)
     
     
@@ -24,4 +27,5 @@ def validate(json_data: dict, json_schema: dict) -> dict:
 
 def generate_models(json_schema) -> BaseModel:
     # Generate pydantic models from json schema
+    # Will return a file containing the models
     pass

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -31,8 +32,8 @@ class Organization(BaseModel):
     contacts: Optional[List[Contact]] = None
     phones: Optional[List[Phone]] = None
     locations: Optional[List[Location]] = None
-    programs: Optional[List[Programs]] = None
-    prganization_identifiers: Optional[List[Organization_Identifier]] = None
+    programs: Optional[List[Program]] = None
+    organization_identifiers: Optional[List[Organization_Identifier]] = None
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
@@ -69,7 +70,7 @@ class Service(BaseModel):
     cost_options: Optional[List[Cost_Option]] = None
     program: Optional[Program] = None
     required_documents: Optional[List[Required_Document]] = None
-    contacts: Optional[List[Contacts]] = None
+    contacts: Optional[List[Contact]] = None
     capacities: Optional[List[Service_Capacity]] = None
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
