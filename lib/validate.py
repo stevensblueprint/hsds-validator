@@ -1,18 +1,57 @@
 from pydantic import BaseModel, ValidationError
 import json
+import os
 
-from lib.models import Organization
+from models import HSDS_MODELS
 
-def validate(json_data: dict, json_schema: dict) -> dict:
+def pick_model_to_validate(filename: str):
+    """
+    Returns (model_cls, model_name) picked from scanning file
+    If none or multiple returns (None, error_message)
+    """
+    
+    base = os.path.basename(filename) # File name
+    norm_name = base.lower().replace("_", "") # Case sensitive file name
+
+    matches = []
+
+    # Loops through all HSDS Models in HSDS_MODELS.py
+    for canonical, model in HSDS_MODELS.items():
+        base_token = canonical.lower().replace("_", "") # Case sensitive model name
+        candidate_tokens = {base_token, f"{base_token}s", f"{base_token}es"} # Acceptable model name variants: no s, s, and es
+
+        if any(token in norm_name for token in candidate_tokens): # If match, append to matches
+            matches.append((canonical, model))
+
+    if not matches: # If no matches, returns None and error message
+        return None, f"No HSDS model name found in filename '{base}'."
+
+    # If multiple models of the same name were found, returns error
+    if len(matches) > 1:
+        names = ", ".join(c for c, _ in matches)
+        return None, (
+            f"Ambiguous HSDS model in filename '{base}'. "
+            f"Matched multiple models: {names}."
+        )
+
+    # Returns (class + name)
+    canonical, model = matches[0]
+    return model, canonical
+
+
+def validate(json_data: dict, filename: str, json_schema: dict) -> dict:
     """
     Validate JSON data against a JSON schema using Pydantic.
     """
     # generate_models does not currently function
     # Include in generate_model the config to forbid extra fields
-    # For now, we will directly use the Organization model
-    model = Organization
+
+    # Verify model exists and is not multiple
+    model = pick_model_to_validate(filename)
+    if model[0] is None:
+        return {"success": False, "errors": [{"column": "<file>", "input": filename, "error": model[1]}]}
+
     json_data_str = json.dumps(json_data)
-    
     
     try:
         model.model_validate_json(json_data_str)
