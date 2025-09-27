@@ -1,7 +1,7 @@
 import click
 import os
-from lib.error_handling import validate_file_exists, validate_file_not_empty, validate_json_format
-
+from lib.error_handling import validate_files, validate_file_exists, validate_file_not_empty, validate_json_format, _validate_single_file
+from lib.error_handling_classes import ValidationResult
 
 SYSTEM_FILES = {'.DS_Store', 'Thumbs.db', 'desktop.ini'}
 def is_system_file(filename):
@@ -13,40 +13,56 @@ def is_system_file(filename):
 
 def validate_json(ctx, param, value):
     """
-    Validates that the file exists, is not empty, and is valid JSON
+    Checks end of file for .json
+    If not applicable, throws BadParameter error
+    If applicable, returns value to main function
     """
+    # value is a file path (string) from click.Path(exists=True)
     name = getattr(value, "name", "")
     if not name.lower().endswith(".json"):
         raise click.BadParameter("File must have a .json extension.")
-    # Check file exists
-    if not validate_file_exists(name):
-        raise click.BadParameter(f"File not found: {name}")
-    # Check file not empty
-    try:
-        if not validate_file_not_empty(name):
-            raise click.BadParameter(f"File is empty: {name}")
-    except Exception as e:
-        raise click.BadParameter(f"Error accessing file: {name} ({str(e)})")
-    # Check valid JSON
-    is_valid, error_message = validate_json_format(name)
-    if not is_valid:
-        raise click.BadParameter(f"Invalid JSON: {error_message}")
+
+    result = _validate_single_file(value, "schema")
+    if not result.success:
+        raise click.BadParameter(result.message)
+
     return value
 
 def validate_directory(ctx, param, value):
     """
-    Validates that the directory exists, is not empty, and contains only .json files (while ignoring system files).
+    Checks directory for at least one file inside
+    If not applicable, throws BadParameter error
+    If applicable, returns value to main function
     """
-    if not os.path.isdir(value):
+    # Check if directory exists
+    if not validate_file_exists(value):
         raise click.BadParameter(f"Directory not found: {value}")
-    files = os.listdir(value)
-    if not files:
-        raise click.BadParameter(f"Directory is empty: {value}")
-    for f in files:
-        if is_system_file(f) or os.path.isdir(os.path.join(value, f)): #skipping over system files and directories
-            continue
-        if not f.lower().endswith('.json'):
-            raise click.BadParameter(f"Directory contains a non-JSON file: {f}")
+    
+    # Check if directory is not empty
+    try:
+        if not os.listdir(value):
+            raise click.BadParameter(f"Directory is empty: {value}")
+    except Exception as e:
+        raise click.BadParameter(f"Error accessing directory: {value} ({str(e)})")
+    
+    # Check for .json files recursively (ignoring system files) and validate JSON format
+    found_json = False
+    for root, dirs, files in os.walk(value):
+        for f in files:
+            if is_system_file(f):
+                continue
+            if f.lower().endswith('.json'):
+                found_json = True
+                file_path = os.path.join(root, f)
+                is_valid, error_message = validate_json_format(file_path)
+                if not is_valid:
+                    raise click.BadParameter(f"Invalid JSON file: {os.path.abspath(file_path)} - {error_message}")
+
+    if not found_json:
+        raise click.BadParameter(
+            f"Directory (including subdirectories) contains no JSON files: {os.path.abspath(value)}"
+        )
+    
     return value
 
 # CLI Command Line Arguments
@@ -62,7 +78,7 @@ def validate_directory(ctx, param, value):
 @click.option(
     "-j",
     "--json_schema",
-    type=click.File("r"),
+    type=click.Path(exists=True),
     required=True,  # Required
     help="Input JSON schema path.",
     callback=validate_json,  # Calls JSON Validation function
@@ -81,7 +97,9 @@ def main(input_dir, json_schema, save):
 
     print("Hello from the HSDS Validator!")
 
-    # JSON validation and File IO
+    # No errors at this point means both args are valid filepaths that are not empty, and hold the correct file types
+
+
 
 if __name__ == "__main__":
     main()
