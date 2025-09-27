@@ -20,7 +20,6 @@ class Organization(BaseModel):
     website: Optional[str] = None
     additional_websites: List[URL]
     tax_status: Optional[str] = None
-    id: Optional[str] = None
     tax_id: Optional[str] = None
     year_incorporated: Optional[int] = None
     legal_status: Optional[str] = None
@@ -38,6 +37,8 @@ class Organization(BaseModel):
 
 class Service(BaseModel):
     id: str 
+    organization_id: str 
+    program_id: str
     name: str 
     alternate_name: Optional[str] = None
     description: Optional[str] = None
