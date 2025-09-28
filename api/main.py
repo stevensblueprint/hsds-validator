@@ -6,7 +6,7 @@ import io
 from jsonschema import validate as js_validate, ValidationError
 import os
 from lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
-from lib.error_handling import validate_json_format
+from lib.error_handling import validate_json_format, validate_file_exists, validate_file_not_empty
 
 app = FastAPI()
 
@@ -34,15 +34,34 @@ def validate(
 
    # Basic input validation
    if not input_dir:
-      raise HTTPException(status_code=400, detail="ZIP file is required")
+      result = ValidationResult.error_result(
+         ValidationErrorType.FILE_NOT_FOUND,
+         "input_dir",
+         "ZIP file is required"
+      )
+      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
   
    if not json_schema:
-      raise HTTPException(status_code=400, detail="JSON schema is required")
+      result = ValidationResult.error_result(
+         ValidationErrorType.FILE_NOT_FOUND,
+         "json_schema",
+         "JSON schema is required"
+      )
+      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
    
    # Validate that uploaded file is a ZIP
    if not input_dir.filename.lower().endswith('.zip'):
-      raise HTTPException(status_code=400, detail="Uploaded input_dir file must be a ZIP file")
+      result = ValidationResult.error_result(
+         ValidationErrorType.FILE_ACCESS_ERROR,
+         input_dir.filename,
+         "Invalid ZIP file"
+      )
+      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+      # raise HTTPException(status_code=400, detail="Uploaded input_dir file must be a ZIP file") #fix how this message returns
    
+   # fix after this point
+   # Extract json files into (array?) of json objects(dicts) -> to call lib/validate on each one
+
    try:
       schema_content = json_schema.file.read()
       if not schema_content or len(schema_content) == 0:
@@ -74,6 +93,7 @@ def validate(
       return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
 
    # Unzip files and validate
+   input_dir_data = []  # array to store file contents as dicts 
    try:
       zip_bytes = input_dir.file.read()
       with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
@@ -112,15 +132,7 @@ def validate(
                   )
                with open(file_path, 'r', encoding='utf-8') as f:
                   data = json.load(f)
-                  try:
-                     js_validate(instance=data, schema=schema)
-                  except ValidationError as ve:
-                     raise FileValidationError(
-                        ValidationErrorType.INVALID_JSON,
-                        fname,
-                        str(ve)
-                     )
-               os.remove(file_path)
+                  input_dir_data.append(data)
             except FileValidationError as ve:
                result = ValidationResult.error_result(
                   ve.error_type,
@@ -138,8 +150,8 @@ def validate(
                errors.append(f"{result.filepath}: {result.error_type.value}")
          if errors:
             return {"success": False, "errors": errors}
-         result = ValidationResult.success_result()
-         return result.to_dict()
+         # result = ValidationResult.success_result()
+         # return result.to_dict()
    except zipfile.BadZipFile:
       result = ValidationResult.error_result(
          ValidationErrorType.FILE_ACCESS_ERROR,
@@ -154,6 +166,10 @@ def validate(
          str(e)
       )
       return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+
+   print(input_dir_data, schema) #check
+   return {"success": True}
+   # call lib/validate
 
 def main():
    uvicorn.run(app, host="0.0.0.0", port=8000)
