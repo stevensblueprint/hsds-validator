@@ -6,6 +6,7 @@ import io
 from jsonschema import validate as js_validate, ValidationError
 import os
 from lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
+from lib.validate import validate as pyd_validate
 from lib.error_handling import validate_json_format, validate_file_exists, validate_file_not_empty
 
 app = FastAPI()
@@ -109,6 +110,7 @@ def validate(
          for fname in file_list:
             if fname.endswith('/'):
                continue
+            # skip system files
             if (fname.startswith('__MACOSX/') or fname.endswith('.DS_Store') or fname.startswith('.') or '/.DS_Store' in fname or '/._' in fname or fname.endswith('Thumbs.db') or fname.endswith('desktop.ini') or '/Thumbs.db' in fname or '/desktop.ini' in fname):
                continue
             if not fname.endswith('.json'):
@@ -150,8 +152,6 @@ def validate(
                errors.append(f"{result.filepath}: {result.error_type.value}")
          if errors:
             return {"success": False, "errors": errors}
-         # result = ValidationResult.success_result()
-         # return result.to_dict()
    except zipfile.BadZipFile:
       result = ValidationResult.error_result(
          ValidationErrorType.FILE_ACCESS_ERROR,
@@ -166,10 +166,18 @@ def validate(
          str(e)
       )
       return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+   
+   # Validate each JSON object against the provided schema using lib.validate
+   aggregated_errors = []
+   for json_obj in input_dir_data:
+      result = pyd_validate(json_obj, schema)
+      if not result.get("success", False):
+         aggregated_errors.extend(result.get("errors", [])) # add to errors list if validation fails
 
-   print(input_dir_data, schema) #check
+   if aggregated_errors:
+      return {"success": False, "errors": aggregated_errors }
+
    return {"success": True}
-   # call lib/validate
 
 def main():
    uvicorn.run(app, host="0.0.0.0", port=8000)
