@@ -3,11 +3,10 @@ import uvicorn
 import json
 import zipfile
 import io
-from jsonschema import validate as js_validate, ValidationError
 import os
 from lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
 from lib.validate import validate as pyd_validate
-from lib.error_handling import validate_json_format, validate_file_exists, validate_file_not_empty
+from lib.error_handling import validate_json_format
 
 app = FastAPI()
 
@@ -58,11 +57,7 @@ def validate(
          "Invalid ZIP file"
       )
       return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
-      # raise HTTPException(status_code=400, detail="Uploaded input_dir file must be a ZIP file") #fix how this message returns
-   
-   # fix after this point
-   # Extract json files into (array?) of json objects(dicts) -> to call lib/validate on each one
-
+     
    try:
       schema_content = json_schema.file.read()
       if not schema_content or len(schema_content) == 0:
