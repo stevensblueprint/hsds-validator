@@ -47,14 +47,12 @@ def validate(json_data: dict, filename: str, json_schema: dict) -> dict:
     # Include in generate_model the config to forbid extra fields
 
     # Verify model exists and is not multiple
-    model = pick_model_to_validate(filename)
-    if model[0] is None:
-        return {"success": False, "errors": [{"column": "<file>", "input": filename, "error": model[1]}]}
-
-    json_data_str = json.dumps(json_data)
+    model_class, model_name = pick_model_to_validate(filename)
+    if model_class is None:
+        return {"success": False, "errors": [{"column": "<file>", "input": filename, "error": model_name}]}
     
     try:
-        model.model_validate_json(json_data_str)
+        model_class.model_validate(json_data)
     except ValidationError as e:
         error_dict = e.errors()
         err_message = []
