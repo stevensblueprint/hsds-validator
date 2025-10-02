@@ -31,7 +31,7 @@ class Organization(BaseModel):
     phones: Optional[List[Phone]] = None
     locations: Optional[List[Location]] = None
     programs: Optional[List[Programs]] = None
-    prganization_identifiers: Optional[List[Organization_Identifier]] = None
+    organization_identifiers: Optional[List[Organization_Identifier]] = None
     attributes: Optional[List[Attribute]] = None
     metadata: Optional[List[Metadata]] = None
 
