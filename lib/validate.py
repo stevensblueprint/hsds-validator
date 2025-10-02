@@ -11,16 +11,17 @@ def pick_model_to_validate(filename: str):
     """
     
     base = os.path.basename(filename) # File name
-    norm_name = base.lower().replace("_", "") # Case sensitive file name
+    file_name, file_type = os.path.splitext(base)
+    norm_name = file_name.lower().replace("_", "") # Case sensitive file name
 
     matches = []
 
     # Loops through all HSDS Models in HSDS_MODELS.py
     for canonical, model in HSDS_MODELS.items():
         base_token = canonical.lower().replace("_", "") # Case sensitive model name
-        candidate_tokens = {base_token, f"{base_token}s", f"{base_token}es"} # Acceptable model name variants: no s, s, and es
+        candidate_tokens = {base_token}
 
-        if any(token in norm_name for token in candidate_tokens): # If match, append to matches
+        if any(token == norm_name for token in candidate_tokens): # If match, append to matches
             matches.append((canonical, model))
 
     if not matches: # If no matches, returns None and error message
