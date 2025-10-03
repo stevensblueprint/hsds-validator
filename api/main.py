@@ -4,6 +4,7 @@ import json
 import zipfile
 import io
 import os
+import tempfile
 from lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
 from lib.validate import validate as pyd_validate
 from lib.error_handling import validate_json_format
@@ -67,26 +68,36 @@ def validate(
             "Schema file is empty"
          )
          return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
-      schema_path = f"/tmp/{json_schema.filename}"
-      with open(schema_path, 'wb') as f:
-         f.write(schema_content)
-      is_valid, error_message = validate_json_format(schema_path)
-      if not is_valid:
-         result = ValidationResult.error_result(
-            ValidationErrorType.INVALID_JSON,
-            json_schema.filename,
-            error_message
-         )
-         return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
-      with open(schema_path, 'r', encoding='utf-8') as f:
-         schema = json.load(f)
+      
+      # Use NamedTemporaryFile for cross-platform compatibility
+      with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.json') as temp_file:
+         temp_file.write(schema_content)
+         schema_path = temp_file.name
+      
+      try:
+         is_valid, error_message = validate_json_format(schema_path)
+         if not is_valid:
+            result = ValidationResult.error_result(
+               ValidationErrorType.INVALID_JSON,
+               json_schema.filename,
+               error_message
+            )
+            return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+         with open(schema_path, 'r', encoding='utf-8') as f:
+            schema = json.load(f)
+      finally:
+         # Clean up the temporary file
+         try:
+            os.unlink(schema_path)
+         except OSError:
+            pass  # Ignore cleanup errors
    except Exception as e:
       result = ValidationResult.error_result(
         ValidationErrorType.UNKNOWN_ERROR,
         json_schema.filename,
         str(e)
       )
-      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value} - {result.message}"]}
 
    # Unzip files and validate
    input_dir_data = []  # array to store file contents as dicts 
@@ -117,19 +128,29 @@ def validate(
                errors.append(f"{result.filepath}: {result.error_type.value}")
                continue
             try:
-               file_path = f"/tmp/{os.path.basename(fname)}"
-               with z.open(fname) as f_in, open(file_path, 'wb') as f_out:
-                  f_out.write(f_in.read())
-               is_valid, error_message = validate_json_format(file_path)
-               if not is_valid:
-                  raise FileValidationError(
-                     ValidationErrorType.INVALID_JSON,
-                     fname,
-                     error_message
-                  )
-               with open(file_path, 'r', encoding='utf-8') as f:
-                  data = json.load(f)
-                  input_dir_data.append(data)
+               # Use NamedTemporaryFile for cross-platform compatibility
+               with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.json') as temp_file:
+                  with z.open(fname) as f_in:
+                     temp_file.write(f_in.read())
+                  file_path = temp_file.name
+               
+               try:
+                  is_valid, error_message = validate_json_format(file_path)
+                  if not is_valid:
+                     raise FileValidationError(
+                        ValidationErrorType.INVALID_JSON,
+                        fname,
+                        error_message
+                     )
+                  with open(file_path, 'r', encoding='utf-8') as f:
+                     data = json.load(f)
+                     input_dir_data.append(data)
+               finally:
+                  # Clean up the temporary file
+                  try:
+                     os.unlink(file_path)
+                  except OSError:
+                     pass  # Ignore cleanup errors
             except FileValidationError as ve:
                result = ValidationResult.error_result(
                   ve.error_type,
@@ -144,7 +165,7 @@ def validate(
                   fname,
                   str(e)
                )
-               errors.append(f"{result.filepath}: {result.error_type.value}")
+               errors.append(f"{result.filepath}: {result.error_type.value} - {result.message}")
          if errors:
             return {"success": False, "errors": errors}
    except zipfile.BadZipFile:
@@ -160,7 +181,7 @@ def validate(
          input_dir.filename if input_dir else "unknown",
          str(e)
       )
-      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value}"]}
+      return {"success": False, "errors": [f"{result.filepath}: {result.error_type.value} - {result.message}"]}
    
    # Validate each JSON object against the provided schema using lib.validate
    aggregated_errors = []
