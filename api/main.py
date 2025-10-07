@@ -144,7 +144,7 @@ def validate(
                      )
                   with open(file_path, 'r', encoding='utf-8') as f:
                      data = json.load(f)
-                     input_dir_data.append(data)
+                     input_dir_data.append({"data": data, "filename": fname})
                finally:
                   # Clean up the temporary file
                   try:
@@ -185,8 +185,8 @@ def validate(
    
    # Validate each JSON object against the provided schema using lib.validate
    aggregated_errors = []
-   for json_obj in input_dir_data:
-      result = pyd_validate(json_obj, schema)
+   for file_info in input_dir_data:
+      result = pyd_validate(file_info["data"], file_info["filename"], schema)
       if not result.get("success", False):
          aggregated_errors.extend(result.get("errors", [])) # add to errors list if validation fails
 
