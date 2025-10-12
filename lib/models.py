@@ -337,3 +337,30 @@ class Taxonomy_Term(BaseModel):
     taxonomy_id: Optional[str] = None
     term_uri: Optional[str] = None
     metadata: Optional[List[Metadata]] = None
+
+HSDS_MODELS = {
+    "Organization": Organization,
+    "Service": Service,
+    "Location": Location,
+    "Service_At_Location": Service_At_Location,
+    "Address": Address,
+    "Phone": Phone,
+    "Schedule": Schedule,
+    "Service_Area": Service_Area,
+    "Language": Language,
+    "Funding": Funding,
+    "Accessibility": Accessibility,
+    "Cost_Option": Cost_Option,
+    "Program": Program,
+    "Required_Document": Required_Document,
+    "Contact": Contact,
+    "Organization_Identifier": Organization_Identifier,
+    "Unit": Unit,
+    "Service_Capacity": Service_Capacity,
+    "Attribute": Attribute,
+    "URL": URL,
+    "Metadata": Metadata,
+    "Meta_Table_Description": Meta_Table_Description,
+    "Taxonomy": Taxonomy,
+    "Taxonomy_Term": Taxonomy_Term,
+}

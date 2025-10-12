@@ -5,10 +5,47 @@ from typing import Any, Dict, List, Optional, Tuple, Type
 from dydantic import create_model_from_schema
 from pydantic import BaseModel, ValidationError
 import json
+import os
 
-from lib.models import Organization
+from models import HSDS_MODELS
 
-def bulk_validate(json_data_list: List[Tuple[str, dict]], json_schemas: List[dict]) -> List[dict]:
+def pick_model_to_validate(filename: str):
+    """
+    Returns (model_cls, model_name) picked from scanning file
+    If none or multiple returns (None, error_message)
+    """
+    
+    base = os.path.basename(filename) # File name
+    file_name, file_type = os.path.splitext(base)
+    norm_name = file_name.lower().replace("_", "") # Case sensitive file name
+
+    matches = []
+
+    # Loops through all HSDS Models in HSDS_MODELS.py
+    for canonical, model in HSDS_MODELS.items():
+        base_token = canonical.lower().replace("_", "") # Case sensitive model name
+        candidate_tokens = {base_token}
+
+        if any(token == norm_name for token in candidate_tokens): # If match, append to matches
+            matches.append((canonical, model))
+
+    if not matches: # If no matches, returns None and error message
+        return None, f"No HSDS model name found in filename '{base}'."
+
+    # If multiple models of the same name were found, returns error
+    if len(matches) > 1:
+        names = ", ".join(c for c, _ in matches)
+        return None, (
+            f"Ambiguous HSDS model in filename '{base}'. "
+            f"Matched multiple models: {names}."
+        )
+
+    # Returns (class + name)
+    canonical, model = matches[0]
+    return model, canonical
+
+
+def bulk_validate(json_data_list: List[Tuple[str, dict]], filename: str, json_schemas: List[dict]) -> List[dict]:
     """
     Generate a single model from the provided schemas and validate each JSON document
     in json_data_list against that model. Each item in json_data_list is a tuple of
