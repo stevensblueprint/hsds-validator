@@ -6,8 +6,7 @@ from dydantic import create_model_from_schema
 from pydantic import BaseModel, ValidationError
 import json
 import os
-
-from models import HSDS_MODELS
+from lib.models import HSDS_MODELS
 
 def pick_model_to_validate(filename: str):
     """
@@ -55,7 +54,7 @@ def bulk_validate(json_data_list: List[Tuple[str, dict]], filename: str, json_sc
     if not json_schemas:
         raise ValueError("No schemas provided")
 
-    main_schema = detect_main_schema_by_references(json_schemas)
+    main_schema = detect_main_schema_by_references(json_schemas, filename)
     pydantic_model = generate_models(main_schema, json_schemas)
 
     results: List[dict] = []
@@ -69,9 +68,8 @@ def validate(json_data: dict, filename: str, model: Type[BaseModel]) -> dict:
     """
     Validate JSON data against a JSON schema using Pydantic.
     """
-    json_data_str = json.dumps(json_data)
     try:
-        model.model_validate_json(json_data_str)
+        model.model_validate(json_data)
         return {"filename": filename, "success": True}
     except ValidationError as e:
         error_dict = e.errors()
@@ -79,21 +77,23 @@ def validate(json_data: dict, filename: str, model: Type[BaseModel]) -> dict:
         for error in error_dict:
             err_message.append({
                 "column": ".".join(str(x) for x in error.get("loc", [])),
-                "input": error.get("input"),
                 "error": error.get("msg")
+                # "input": error.get("input")
+                
             })
         return {"filename": filename, "success": False, "errors": err_message}
     except Exception as e:
         # Catch-all for unexpected errors during validation
         return {"filename": filename, "success": False, "errors": [{"error": str(e)}]}
 
-def detect_main_schema_by_references(schemas: List[dict]) -> dict:
+def detect_main_schema_by_references(schemas: List[dict], filename: str = None) -> dict:
     """
     Detect the main schema by finding schemas that are NOT referenced by others.
     Raises an error if multiple unreferenced schemas are found.
     
     Args:
         schemas: List of schema dictionaries
+        return_all: If True, returns all unreferenced schemas instead of raising error
     
     Returns:
         The main schema (not referenced by others)
@@ -144,6 +144,19 @@ def detect_main_schema_by_references(schemas: List[dict]) -> dict:
         )
     
     if len(unreferenced_schemas) > 1:
+        if filename:
+            # Use pick_model_to_validate to determine which schema to use
+            model, model_name = pick_model_to_validate(filename)
+            if model is not None:
+                # Find the schema that matches the selected model
+                for schema in unreferenced_schemas:
+                    schema_name = get_schema_identifier(schema)
+                    if schema_name and schema_name.lower() == model_name.lower():
+                        print(f"Main schema selected based on filename '{filename}': {schema_name}")
+                        return schema
+                
+                # If we couldn't find a matching schema, continue to the error
+                print(f"Warning: Could not find schema matching model {model_name}")
         schema_ids = [get_schema_identifier(s) for s in unreferenced_schemas]
         raise ValueError(
             f"Multiple potential main schemas found: {schema_ids}. "
