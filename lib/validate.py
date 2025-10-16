@@ -264,25 +264,38 @@ def resolve_external_refs(main_schema: Dict[str, Any], all_schemas: List[Dict[st
 def clean_hsds_schema(schema: Dict[str, Any]) -> Dict[str, Any]:
     """Remove HSDS-specific fields that aren't part of standard JSON Schema."""
     
-    def clean_properties(obj):
+    # HSDS metadata fields to remove from property definitions (not from properties object itself)
+    hsds_metadata_fields = {"name", "title", "constraints", "example", "core", "order"}
+    
+    # Root-level HSDS fields to remove
+    root_hsds_fields = {"path", "datapackage_metadata", "tabular_required"}
+    
+    def clean_properties(obj, is_root=False):
         if isinstance(obj, dict):
-            # Remove HSDS-specific fields
-            hsds_fields = {"core", "name", "datapackage_metadata", "example", "order"}
-            cleaned = {k: v for k, v in obj.items() if k not in hsds_fields}
+            cleaned = {}
+            for k, v in obj.items():
+                # At root level, remove root-specific HSDS fields
+                if is_root and k in root_hsds_fields:
+                    continue
+                    
+                # If we're inside a property definition (has 'type' key), remove metadata
+                if isinstance(v, dict) and 'type' in v:
+                    # This is a property definition - clean its metadata
+                    property_cleaned = {
+                        pk: pv for pk, pv in v.items() 
+                        if pk not in hsds_metadata_fields
+                    }
+                    cleaned[k] = clean_properties(property_cleaned)
+                else:
+                    # Keep the key, recursively clean the value
+                    cleaned[k] = clean_properties(v)
             
-            # Handle constraints field - convert to JSON Schema equivalents where possible
-            if "constraints" in obj:
-                constraints = obj["constraints"]
-                if isinstance(constraints, dict):
-                    # Remove constraints as it's not standard JSON Schema
-                    pass
-            
-            return {k: clean_properties(v) if isinstance(v, (dict, list)) else v for k, v in cleaned.items()}
+            return cleaned
         elif isinstance(obj, list):
             return [clean_properties(item) for item in obj]
         return obj
     
-    return clean_properties(schema)
+    return clean_properties(schema, is_root=True)
 
 def generate_models(main_schema: Dict[str, Any], all_schemas: List[Dict[str, Any]]) -> Type[BaseModel]:
     """
