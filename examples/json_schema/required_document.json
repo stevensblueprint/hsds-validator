@@ -1,0 +1,78 @@
+{
+    "name": "required_document",
+    "path": "required_documents.csv",
+    "description": "The details of any documents that are required in order to access or use services.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 13
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the document. Each document must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "f6ad7e69-b9c8-42ce-92db-92cedb4c05c0"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "description": "The identifier of the service for which this entry describes the required document.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b"
+        },
+        "document": {
+            "name": "document",
+            "type": "string",
+            "title": "Document",
+            "description": "A free text description of the document required to apply for or receive the service.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Any official identification document (Passport, Driver's Licence, identity card) and evidence of address such as an official letter from local or national government. A driver's license which shows your name, photograph, and address can be used as a sole identification document."
+        },
+        "uri": {
+            "name": "uri",
+            "type": "string",
+            "title": "URI",
+            "description": "A web link to the document.",
+            "format": "uri",
+            "constraints": {
+                "unique": false
+            },
+            "example": "http://example.com"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}

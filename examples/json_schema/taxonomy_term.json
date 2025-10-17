@@ -1,0 +1,132 @@
+{
+    "name": "taxonomy_term",
+    "path": "taxonomy_terms.csv",
+    "description": "Each service can be categorized according to one or more taxonomy terms. The taxonomy_term object contains a list of taxonomy terms, their names, and, for hierarchical taxonomies, their structure.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 16
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for this taxonomy term. Each taxonomy term must have a unique identifier, within the scope of the dataset.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "3f7b145d-84af-42d7-8fae-eaca714b02b2",
+            "core": "Y"
+        },
+        "code": {
+            "name": "code",
+            "type": "string",
+            "title": "Code",
+            "description": "The term identfier as used in the taxonomy. This and the taxonomy_id combined define the term.",
+            "constraints": {
+                "unique": true
+            },
+            "example": "code"
+        },
+        "name": {
+            "name": "name",
+            "type": "string",
+            "title": "Name",
+            "description": "The taxonomy term itself.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "name",
+            "core": "Y"
+        },
+        "description": {
+            "name": "description",
+            "type": "string",
+            "title": "Description",
+            "description": "A free text description of the term.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "description"
+        },
+        "parent_id": {
+            "name": "parent_id",
+            "type": "string",
+            "title": "Parent Identifier",
+            "description": "If this is a child term in a hierarchical taxonomy, give the identifier of the parent category. For top-level categories, this is not required.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "0bc248fa-dc27-4650-9ba4-8f1a24ef16a2",
+            "core": "Y"
+        },
+        "taxonomy": {
+            "name": "taxonomy",
+            "type": "string",
+            "title": "Taxonomy",
+            "description": "If this is an established taxonomy, a free text description of which taxonomy is in use. If possible, provide a URI.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "taxonomy",
+            "core": "Y"
+        },
+        "taxonomy_detail": {
+            "name": "taxonomy",
+            "title": "Taxonomy",
+            "description": "Taxonomies from which taxonomy terms are taken",
+            "$ref": "taxonomy.json"
+        },
+        "language": {
+            "name": "language",
+            "type": "string",
+            "title": "Language",
+            "description": "An ISO 639-1, ISO 639-2, or ISO 639-3 [language code](http://www.loc.gov/standards/iso639-2/php/code_list.php) to represent the language of the term. The three-letter codes from ISO 639-2 and ISO 639-3 provide greater accuracy when describing variants of languages, which may be relevant to particular communities.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "eng"
+        },
+        "taxonomy_id": {
+            "name": "taxonomy_id",
+            "type": "string",
+            "title": "Taxonomy Identifier",
+            "description": "The identifier of the taxonomy containing the term.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "07ff6aee-a219-438c-b694-d2fcb6c5373b"
+        },
+        "term_uri": {
+            "name": "term_uri",
+            "type": "string",
+            "title": "Term URI",
+            "description": "URI of the term.",
+            "format": "uri",
+            "constraints": {
+                "unique": false
+            },
+            "example": "http://example.com"
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "description"
+    ]
+}

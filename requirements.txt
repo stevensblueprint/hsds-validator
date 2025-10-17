@@ -3,3 +3,5 @@ datamodel-code-generator==0.33.0
 fastapi==0.116.1
 pydantic==2.11.7
 jsonschema==4.25.1
+dydantic==0.0.8
+python-multipart==0.0.20

@@ -1,0 +1,123 @@
+{
+    "name": "service_area",
+    "path": "service_areas.csv",
+    "description": "The details of the geographic area for which a service is available.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 12
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the service area. Each service area must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "381c64f1-a724-4884-9c21-ac96c21cca3e",
+            "core": "Y"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "description": "The identifier of the service for which this entry describes the service area",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b",
+            "core": "Y"
+        },
+	"service_at_location_id": {
+            "name": "service_at_location_id",
+            "type": "string",
+            "title": "Service At Location Identifier",
+            "description": "The identifier of the service at location object linked to this object.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "e94c9f38-1e8f-4564-91d4-d53501ab1765",
+            "core": "Y"
+        },
+        "name": {
+            "name": "name",
+            "type": "string",
+            "title": "Name",
+            "description": "A free text geographic area where a service is available.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "The service is available to all residents of the MyCity area. We provide the service in our offices or via video conferencing to any who can provide evidence of their residency.",
+            "core": "Y"
+        },
+        "description": {
+            "name": "description",
+            "type": "string",
+            "title": "Description",
+            "description": "A more detailed free text description of this service area. Used to provide any additional information that cannot be communicated using the structured area and geometry fields.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "The service is available to all residents of the MyCity area, including all postcodes starting with AB1, AB2, and AB3",
+            "core": "Y"
+        },
+        "extent": {
+            "name": "extent",
+            "type": "string",
+            "title": "Extent",
+            "description": "A definition of the polygon defining the area.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "extent"
+        },
+        "extent_type": {
+            "name": "extent_type",
+            "type": "string",
+            "title": "Extent Type",
+            "description": "The format of the extent field  populated from an enum of  \"geojson\", \"topojson\",  \"kml\",and (for legacy systems or early state during transformation) \"text\".",
+            "constraints": {
+                "unique": false
+            },
+            "example": "geojson"
+        },
+        "uri": {
+            "name": "uri",
+            "type": "string",
+            "title": "URI",
+            "description": "A URI which acts as a persistent identifier to identify an area.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "http://example.com"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}

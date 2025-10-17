@@ -1,0 +1,168 @@
+{
+    "name": "address",
+    "path": "addresses.csv",
+    "description": "The addresses of locations where organizations operate.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 9
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier of the postal address. Each postal address must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "74706e55-df26-4b84-80fe-ecc30b5befb4",
+            "core": "Y"
+        },
+        "location_id": {
+            "name": "location_id",
+            "type": "string",
+            "title": "Location Identifier",
+            "description": "The identifier of the location for this postal address.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "3a19ff88-4620-4d17-9830-ac1d859eb5d5",
+            "core": "Y"
+        },
+        "attention": {
+            "name": "attention",
+            "type": "string",
+            "title": "Attention",
+            "description": "The name of the person or entity whose attention should be sought at the location. These are often included as a \"care of\" component of an address.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "A. Persona",
+            "core": "Y"
+        },
+        "address_1": {
+            "name": "address_1",
+            "type": "string",
+            "title": "Address line 1",
+            "description": "The first line(s) of the address, including office, building number and street.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "1-30 Main Street",
+            "core": "Y"
+        },
+        "address_2": {
+            "name": "address_2",
+            "type": "string",
+            "title": "Address line 2",
+            "description": "A second (additional) line of address information.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyVillage"
+        },
+        "city": {
+            "name": "city",
+            "type": "string",
+            "title": "City",
+            "description": "The city in which the address is located.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyCity",
+            "core": "Y"
+        },
+        "region": {
+            "name": "region",
+            "type": "string",
+            "title": "Region",
+            "description": "The region in which the address is located (optional).",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyRegion",
+            "core": "Y"
+        },
+        "state_province": {
+            "name": "state_province",
+            "type": "string",
+            "title": "State Or Province",
+            "description": "The state or province in which the address is located.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyState",
+            "core": "Y"
+        },
+        "postal_code": {
+            "name": "postal_code",
+            "type": "string",
+            "title": "Postal Code",
+            "description": "The postal code for the address.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ABC 1234",
+            "core": "Y"
+        },
+        "country": {
+            "name": "country",
+            "type": "string",
+            "title": "Country",
+            "description": "The country in which the address is located. This should be given as an ISO 3361-1 country code (two letter abbreviation).",
+            "constraints": {
+                "unique": false
+            },
+            "example": "US",
+            "core": "Y"
+        },
+        "address_type": {
+            "name": "address_type",
+            "type": "string",
+            "title": "Address Type",
+            "description": "The type of address which may be `physical`, `postal`, or `virtual`.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "postal",
+            "core": "Y",
+            "enum": [
+                "physical",
+                "postal",
+                "virtual"
+            ]
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "address_1",
+        "city",
+        "state_province",
+        "postal_code",
+        "country",
+        "address_type"
+    ]
+}

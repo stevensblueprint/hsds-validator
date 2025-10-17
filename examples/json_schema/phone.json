@@ -1,0 +1,154 @@
+{
+    "name": "phone",
+    "path": "phones.csv",
+    "description": "The details of the telephone numbers used to contact organizations, services, and locations.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 7
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the phone number. Each entry must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "1554f2e2-a373-45db-a3fa-9fc48a61c15e",
+            "core": "Y"
+        },
+        "location_id": {
+            "name": "location_id",
+            "type": "string",
+            "title": "Location Identifier",
+            "description": "The identifier of the location where this phone number is located.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "3a19ff88-4620-4d17-9830-ac1d859eb5d5"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "description": "The identifier of the service for which this is the phone number.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b"
+        },
+        "organization_id": {
+            "name": "organization_id",
+            "type": "string",
+            "title": "Organization Identifier",
+            "description": "The identifier of the organization for which this is the phone number.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "d9d5e0f5-d3ce-4f73-9a2f-4dd0ecc6c610"
+        },
+        "contact_id": {
+            "name": "contact_id",
+            "type": "string",
+            "title": "Contact Identifier",
+            "description": "The identifier of the contact for which this is the phone number.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "1e7efce3-639b-4880-940c-b95cd30cdb50",
+            "core": "Y"
+        },
+        "service_at_location_id": {
+            "name": "service_at_location_id",
+            "type": "string",
+            "title": "Service At Location Identifier",
+            "description": "The identifier of the \u2018service at location\u2019 table entry, when this phone number is specific to a service in a particular location.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "e94c9f38-1e8f-4564-91d4-d53501ab1765"
+        },
+        "number": {
+            "name": "number",
+            "type": "string",
+            "title": "Number",
+            "description": "The phone number.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "\"+44 1234 234567\"",
+            "core": "Y"
+        },
+        "extension": {
+            "name": "extension",
+            "type": "number",
+            "title": "Extension",
+            "description": "The extension of the phone number.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "100"
+        },
+        "type": {
+            "name": "type",
+            "type": "string",
+            "title": "Type",
+            "description": "Indicates the type of phone service, drawing from the RFC6350 list of types (text (for SMS), voice, fax, cell, video, pager, textphone).",
+            "constraints": {
+                "unique": false
+            },
+            "example": "voice"
+        },
+        "description": {
+            "name": "description",
+            "type": "string",
+            "title": "Description",
+            "description": "A free text description providing extra information about the phone service",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Our main reception phone number. The phones will be available from 0800 (8am) until 1800 (6pm) local time. There may be some slight delays in answering your call if we are busy."
+        },
+        "languages": {
+            "name": "languages",
+            "type": "array",
+            "title": "Languages",
+            "description": "The details of the languages that are spoken at locations or services. This does not include languages which can only be used with interpretation.",
+            "items": {
+                "$ref": "language.json"
+            }
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "number"
+    ]
+}

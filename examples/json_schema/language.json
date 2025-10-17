@@ -1,0 +1,112 @@
+{
+    "name": "language",
+    "path": "languages.csv",
+    "description": "The languages that are spoken at locations or services. This does not include languages which can only be used with interpretation.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 14
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the language. Each entry must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "2989d3ed-c547-48f8-8f9d-432d81c7892e",
+            "core": "Y"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "description": "The identifier of the service for which the entry describes the languages in which services are delivered.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b",
+            "core": "Y"
+        },
+        "location_id": {
+            "name": "location_id",
+            "type": "string",
+            "title": "Location Identifier",
+            "description": "The identifier of the location for which the entry describes the languages in which services are delivered.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "3a19ff88-4620-4d17-9830-ac1d859eb5d5"
+        },
+        "phone_id": {
+            "name": "phone_id",
+            "type": "string",
+            "title": "Phone Identifier",
+            "format": "uuid",
+            "description": "The identifier of the phone for which the entry describes the languages in which services delivered.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "1554f2e2-a373-45db-a3fa-9fc48a61c15e"
+        },
+        "name": {
+            "name": "name",
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the language in which the service is delivered.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Urdu",
+            "core": "Y"
+        },
+        "code": {
+            "name": "code",
+            "type": "string",
+            "title": "Code",
+            "description": "The ISO 639-1 or ISO 639-3 code for the language.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ur"
+        },
+        "note": {
+            "name": "note",
+            "type": "string",
+            "title": "Note",
+            "description": "A free text description of any additional context or services provided for this language.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Translation services provided via bilingual staff when they are available"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}
