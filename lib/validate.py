@@ -54,7 +54,7 @@ def bulk_validate(json_data_list: List[Tuple[str, dict]], filename: str, json_sc
     if not json_schemas:
         raise ValueError("No schemas provided")
 
-    main_schema = detect_main_schema_by_references(json_schemas, filename)
+    main_schema = detect_main_schema_by_filename(json_schemas, filename)
     pydantic_model = generate_models(main_schema, json_schemas)
 
     results: List[dict] = []
@@ -86,86 +86,45 @@ def validate(json_data: dict, filename: str, model: Type[BaseModel]) -> dict:
         # Catch-all for unexpected errors during validation
         return {"filename": filename, "success": False, "errors": [{"error": str(e)}]}
 
-def detect_main_schema_by_references(schemas: List[dict], filename: str = None) -> dict:
+def detect_main_schema_by_filename(schemas: List[dict], filename: str) -> dict:
     """
-    Detect the main schema by finding schemas that are NOT referenced by others.
-    Raises an error if multiple unreferenced schemas are found.
+    Detect the main schema by using the filename to determine which schema to use.
+    This function relies entirely on pick_model_to_validate to determine the main schema.
     
     Args:
         schemas: List of schema dictionaries
-        return_all: If True, returns all unreferenced schemas instead of raising error
+        filename: The filename to use for schema selection
     
     Returns:
-        The main schema (not referenced by others)
+        The main schema that matches the model determined from the filename
         
     Raises:
-        ValueError: If no schemas or multiple unreferenced schemas found
+        ValueError: If no schemas provided or no matching model found
     """
     if not schemas:
         raise ValueError("No schemas provided")
     
-    if len(schemas) == 1:
-        return schemas[0]
+    if not filename:
+        raise ValueError("Filename is required for schema selection")
     
-    # Find all external references across all schemas
-    referenced_ids = set()
-    schema_lookup = {}
+    # Use pick_model_to_validate to determine which model to use
+    model, model_name = pick_model_to_validate(filename)
+    if model is None:
+        raise ValueError(f"No matching model found for filename '{filename}'")
     
+    # Find the schema that matches the selected model
     for schema in schemas:
-        schema_id = get_schema_identifier(schema)
-        schema_lookup[schema_id] = schema
-        
-        # Find all $ref references in this schema
-        refs = find_all_refs(schema)
-        for ref in refs:
-            if not ref.startswith("#"):  # External ref only
-                referenced_ids.add(ref)
-                # Also add filename variations for flexible matching
-                referenced_ids.add(Path(ref).name)
+        schema_name = get_schema_identifier(schema)
+        if schema_name and schema_name.lower() == model_name.lower():
+            print(f"Main schema selected based on filename '{filename}': {schema_name}")
+            return schema
     
-    # Find schemas that are not referenced by others
-    unreferenced_schemas = []
-    for schema in schemas:
-        schema_id = get_schema_identifier(schema)
-        
-        # Check if this schema is referenced
-        is_referenced = (
-            schema_id in referenced_ids or 
-            f"{schema_id}.json" in referenced_ids    # Add .json to schema_id
-        )
-        
-        if not is_referenced:
-            unreferenced_schemas.append(schema)
-    
-    if len(unreferenced_schemas) == 0:
-        raise ValueError(
-            "No main schema found: all schemas are referenced by others. "
-            "This suggests a circular reference or missing main schema."
-        )
-    
-    if len(unreferenced_schemas) > 1:
-        if filename:
-            # Use pick_model_to_validate to determine which schema to use
-            model, model_name = pick_model_to_validate(filename)
-            if model is not None:
-                # Find the schema that matches the selected model
-                for schema in unreferenced_schemas:
-                    schema_name = get_schema_identifier(schema)
-                    if schema_name and schema_name.lower() == model_name.lower():
-                        print(f"Main schema selected based on filename '{filename}': {schema_name}")
-                        return schema
-                
-                # If we couldn't find a matching schema, continue to the error
-                print(f"Warning: Could not find schema matching model {model_name}")
-        schema_ids = [get_schema_identifier(s) for s in unreferenced_schemas]
-        raise ValueError(
-            f"Multiple potential main schemas found: {schema_ids}. "
-            "Cannot determine which schema is the main one. "
-            "Please ensure only one schema is not referenced by others."
-        )
-    
-    print(f"Main schema detected: {get_schema_identifier(unreferenced_schemas[0])}")
-    return unreferenced_schemas[0]
+    # If we couldn't find a matching schema, raise an error
+    schema_names = [get_schema_identifier(s) for s in schemas if get_schema_identifier(s)]
+    raise ValueError(
+        f"Could not find schema matching model '{model_name}'. "
+        f"Available schemas: {schema_names}"
+    )
 
 def get_schema_identifier(schema: dict) -> str:
     """Get a unique identifier for a schema."""
