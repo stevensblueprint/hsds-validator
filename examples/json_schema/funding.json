@@ -1,0 +1,78 @@
+{
+    "name": "funding",
+    "path": "funding.csv",
+    "description": "The sources of funding for a service or organization.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 11
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the funding. Each entry must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "1f2df32c-bf08-4b8e-bd6f-e834014b19bc"
+        },
+        "organization_id": {
+            "name": "organization_id",
+            "type": "string",
+            "title": "Organization Identifier",
+            "description": "The identifier of the organization in receipt of this funding.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "d9d5e0f5-d3ce-4f73-9a2f-4dd0ecc6c610"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "format": "uuid",
+            "description": "The identifier of the service in receipt of this funding.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b"
+        },
+        "source": {
+            "name": "source",
+            "type": "string",
+            "title": "Source",
+            "description": "A free text description of the source of funds for this organization or service.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "This service is funded partially by the MyCity local government and via grants made by charity funding bodies. We also operate a for-profit department which is used to partially cover the expense of the public service"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}

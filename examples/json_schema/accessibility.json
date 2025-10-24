@@ -1,0 +1,91 @@
+{
+    "name": "accessibility",
+    "path": "accessibility.csv",
+    "description": "The details of the arrangements for access to locations for people who have disabilities.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 15
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for this accessibility information. Each entry must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "afcf296e-1cb2-4139-9c88-33d587d1a50b",
+            "core": "Y"
+        },
+        "location_id": {
+            "name": "location_id",
+            "type": "string",
+            "title": "Location Identifier",
+            "description": "The identifier for the location of the accessibility provision.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "3a19ff88-4620-4d17-9830-ac1d859eb5d5",
+            "core": "Y"
+        },
+        "description": {
+            "name": "description",
+            "type": "string",
+            "title": "Description",
+            "description": "A free text description of the assistance or infrastructure that facilitates access to clients with disabilities.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "The building is equipped with induction loops for hearing aids. Wheelchair access is possible on all levels.",
+            "core": "Y"
+        },
+        "details": {
+            "name": "details",
+            "type": "string",
+            "title": "Details",
+            "description": "Any further details relating to the relevant accessibility arrangements at this location.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Switch hearing aid to T-coil to access the induction loop facility."
+        },
+        "url": {
+            "name": "url",
+            "type": "string",
+            "title": "URL",
+            "description": "The URL of a page giving more information about the accessibility of the location.",
+            "format": "uri",
+            "constraints": {
+                "unique": false
+            },
+            "example": "http://example.com"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ]
+}

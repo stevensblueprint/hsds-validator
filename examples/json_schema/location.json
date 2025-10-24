@@ -1,0 +1,225 @@
+{
+    "name": "location",
+    "path": "locations.csv",
+    "description": "The locations where organizations operate. Locations may be virtual, and one organization may have many locations.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 6
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier of the location. Each location must have a unique identifier.",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "3a19ff88-4620-4d17-9830-ac1d859eb5d5",
+            "core": "Y"
+        },
+        "location_type": {
+            "name": "location_type",
+            "type": "string",
+            "title": "Location Type",
+            "description": "The type of location, which may be either `physical`, `postal`, or `virtual`.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "physical",
+            "core": "Y",
+            "enum": [
+                "physical",
+                "postal",
+                "virtual"
+            ]
+        },
+        "url": {
+            "name": "url",
+            "type": "string",
+            "title": "URL",
+            "description": "If location_type is virtual, then this field represents the URL of a virtual location.",
+            "format": "uri",
+            "constraints": {
+                "unique": false
+            },
+            "example": "http://example.com",
+            "core": "Y"
+        },
+        "organization_id": {
+            "name": "organization_id",
+            "type": "string",
+            "title": "Organization Identifier",
+            "description": "The organization identifier for a location. This is the organization that is responsible for maintaining information about this location. The identifier of the organization should be given here. Details of the services the organization delivers at this location should be provided in the services_at_location table.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "985e4a42-bd9f-4edc-911d-0243a4640aca"
+        },
+        "name": {
+            "name": "name",
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the location.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyCity Civic Center",
+            "core": "Y"
+        },
+        "alternate_name": {
+            "name": "alternate_name",
+            "type": "string",
+            "title": "Alternate Name",
+            "description": "An (optional) alternative name of the location.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Civic Center"
+        },
+        "description": {
+            "name": "description",
+            "type": "string",
+            "title": "Description",
+            "description": "A free text description of the location.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyCity Civic Center is located on Main Street and contains facilities for a number of civic and community services available.",
+            "core": "Y"
+        },
+        "transportation": {
+            "name": "transportation",
+            "type": "string",
+            "title": "Transportation",
+            "description": "A free text description of the access to public or private transportation to and from the location.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "MyCity Civic Center is serviced by the number 1 Bus and is a short walk from the Main Street Metro Station"
+        },
+        "latitude": {
+            "name": "latitude",
+            "type": "number",
+            "title": "Latitude",
+            "description": "The latitude of the location expressed in decimal degrees in WGS84 datum.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "100",
+            "core": "Y"
+        },
+        "longitude": {
+            "name": "longitude",
+            "type": "number",
+            "title": "Longitude",
+            "description": "The longitude of the location expressed in decimal degrees in WGS84 datum.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "101",
+            "core": "Y"
+        },
+        "external_identifier": {
+            "name": "external_identifier",
+            "type": "string",
+            "title": "External Identifier",
+            "description": "A third party identifier for the location, which can be drawn from other services e.g. UK UPRN.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "10092008082"
+        },
+        "external_identifier_type": {
+            "name": "external_identifier_type",
+            "type": "string",
+            "title": "External Identifier Type",
+            "description": "The scheme used for the location's external_identifier e.g. UK UPRN.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "UPRN"
+        },
+        "languages": {
+            "name": "languages",
+            "type": "array",
+            "title": "Languages",
+            "description": "The languages that are spoken at locations or services. This does not include languages which can only be used with interpretation.",
+            "items": {
+                "$ref": "language.json"
+            }
+        },
+        "addresses": {
+            "name": "addresses",
+            "type": "array",
+            "title": "Addresses",
+            "description": "The addresses of locations where organizations operate.",
+            "items": {
+                "$ref": "address.json"
+            }
+        },
+        "contacts": {
+            "name": "contacts",
+            "type": "array",
+            "title": "Contacts",
+            "description": "The details of the named contacts for services and organizations. Note that in the HSDS data package format, if an individual is the contact for multiple services, their details may be duplicated multiple times in this table, each time with a new identifier, and with the rows containing different service ids.",
+            "items": {
+                "$ref": "contact.json"
+            }
+        },
+        "accessibility": {
+            "name": "accessibility",
+            "type": "array",
+            "title": "Accessibility",
+            "description": "The details of the arrangements for access to locations for people who have disabilities",
+            "items": {
+                "$ref": "accessibility.json"
+            }
+        },
+        "phones": {
+            "name": "phones",
+            "type": "array",
+            "title": "Phones",
+            "description": "The details of the telephone numbers used to contact organizations, services, and locations.",
+            "items": {
+                "$ref": "phone.json"
+            }
+        },
+        "schedules": {
+            "name": "schedules",
+            "type": "array",
+            "title": "Schedules",
+            "description": "The details of when a service or location is open. Entries are RFC 5545 RRULES.",
+            "items": {
+                "$ref": "schedule.json"
+            }
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "The metadata table contains a record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "location_type"
+    ]
+}

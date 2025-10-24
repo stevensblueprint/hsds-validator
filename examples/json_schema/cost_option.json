@@ -1,0 +1,122 @@
+{
+    "name": "cost_option",
+    "path": "cost_options.csv",
+    "description": "The costs of a service at certain points in time. This is an LGA Extension. This object provides a structured version of the text information contained in the 'fees' field of the 'service' object.",
+    "datapackage_metadata": {
+        "format": "csv",
+        "mediatype": "text/csv",
+        "profile": "tabular-data-resource",
+        "order": 19
+    },
+    "type": "object",
+    "properties": {
+        "id": {
+            "name": "id",
+            "type": "string",
+            "title": "Identifier",
+            "description": "The identifier for the cost option. Each entry must have a unique identifier",
+            "format": "uuid",
+            "constraints": {
+                "unique": true
+            },
+            "example": "1fdf4d39-3d80-484d-9f92-a8ffa08621e7"
+        },
+        "service_id": {
+            "name": "service_id",
+            "type": "string",
+            "title": "Service Identifier",
+            "description": "The identifier of the services for which the entry describes the cost.",
+            "format": "uuid",
+            "constraints": {
+                "unique": false
+            },
+            "example": "ac148810-d857-441c-9679-408f346de14b"
+        },
+        "valid_from": {
+            "name": "valid_from",
+            "type": "string",
+            "title": "Valid From",
+            "description": "The date when this price is valid from.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "2020-01-01",
+            "datapackage_type": "date"
+        },
+        "valid_to": {
+            "name": "valid_to",
+            "type": "string",
+            "title": "Valid To",
+            "description": "The date when this price is valid to.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "2022-12-31",
+            "datapackage_type": "date"
+        },
+        "option": {
+            "name": "option",
+            "type": "string",
+            "title": "Option",
+            "description": "Conditions associated with the cost option.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "Under 18s and Over 60s"
+        },
+        "currency": {
+            "name": "currency",
+            "type": "string",
+            "title": "Currency",
+            "description": "The 3 letter currency code of this cost option (expected to be gbp by Open Referral UK).",
+            "constraints": {
+                "unique": false
+            },
+            "example": "gbp"
+        },
+        "amount": {
+            "name": "amount",
+            "type": "number",
+            "title": "Amount",
+            "description": "The cost of the option, expressed as an amount.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "35"
+        },
+        "amount_description": {
+            "name": "amount_description",
+            "type": "string",
+            "title": "Amount Description",
+            "description": "Specific details qualifying the cost amount.",
+            "constraints": {
+                "unique": false
+            },
+            "example": "per 1 hour session"
+        },
+        "attributes": {
+            "name": "attributes",
+            "type": "array",
+            "title": "Attributes",
+            "description": "A link between a service and one or more classifications that describe the nature of the service provided.",
+            "items": {
+                "$ref": "attribute.json"
+            }
+        },
+        "metadata": {
+            "name": "metadata",
+            "type": "array",
+            "title": "Metadata",
+            "description": "A record of the changes that have been made to the data in order to maintain provenance information.",
+            "items": {
+                "$ref": "metadata.json"
+            }
+        }
+    },
+    "required": [
+        "id"
+    ],
+    "tabular_required": [
+        "service_id"
+    ]
+}
