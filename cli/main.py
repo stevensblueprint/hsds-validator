@@ -94,26 +94,20 @@ def validate_directory(ctx, param, value):
 
 # CLI Command Line Arguments
 @click.command()
-@click.option(
-    "-i",
-    "--input_dir",
-    type=click.Path(exists=True, file_okay=False),  # Type must be an existing directory
-    required=True,  # Required
-    help="Input valid directory path. Directory must not be empty.",
+@click.argument(
+    "input_dir",
+    type=click.Path(exists=True, file_okay=False),
     callback=validate_directory
 )
-@click.option(
-    "-s",
-    "--schema_dir",
+@click.argument(
+    "schema_dir",
     type=click.Path(exists=True, file_okay=False),
-    required=True,  # Required
-    help="Input JSON schema directory path. Directory must contain JSON schema files.",
-    callback=validate_schema_directory,  # Calls schema directory validation function
+    callback=validate_schema_directory
 )
 @click.option(
     "-o", 
     "--save", 
-    is_flag=True, # Boolean value
+    is_flag=True,
     help="Saves result to file.")
 
 
