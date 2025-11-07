@@ -1,32 +1,61 @@
 import click
 import os
 import json
-from lib.error_handling import validate_file_exists, validate_json_format, _validate_single_file
+from lib.error_handling import validate_file_exists, validate_json_format
 from lib.error_handling_classes import FileValidationError, ValidationErrorType
-from lib.validate import validate as pyd_validate
+from lib.validate import bulk_validate
 
 SYSTEM_FILES = {'.DS_Store', 'Thumbs.db', 'desktop.ini'}
+
 def is_system_file(filename):
+    """Check if a file is a system file (matches API behavior)"""
     return (
         filename in SYSTEM_FILES or
         filename.startswith('._') or
-        filename.startswith('.')
+        filename.startswith('.') or
+        filename.startswith('__MACOSX/') or
+        '/.DS_Store' in filename or
+        '/._' in filename or
+        '/Thumbs.db' in filename or
+        '/desktop.ini' in filename or
+        filename.endswith('.DS_Store') or
+        filename.endswith('Thumbs.db') or
+        filename.endswith('desktop.ini')
     )
 
-def validate_json(ctx, param, value):
+def validate_schema_directory(ctx, param, value):
     """
-    Checks end of file for .json
-    If not applicable, throws BadParameter error
-    If applicable, returns value to main function
+    Checks directory for at least one JSON schema file
+    Raises BadParameter error if:
+    - Directory not found or empty
+    - No JSON schema files found
     """
-    # value is a file path (string) from click.Path(exists=True)
-    if not value.lower().endswith(".json"):
-        raise click.BadParameter("File must have a .json extension.")
-
-    result = _validate_single_file(value, "schema")
-    if not result.success:
-        raise click.BadParameter(result.message)
-
+    # Check if directory exists
+    if not validate_file_exists(value):
+        raise click.BadParameter(f"Directory not found: {value}")
+    
+    # Check if directory is not empty
+    try:
+        if not os.listdir(value):
+            raise click.BadParameter(f"Directory is empty: {value}")
+    except Exception as e:
+        raise click.BadParameter(f"Error accessing directory: {value} ({str(e)})")
+    
+    # Check for at least one JSON file (non-JSON files will be handled in main())
+    has_json = False
+    for root, dirs, files in os.walk(value):
+        for f in files:
+            if is_system_file(f):
+                continue
+            if f.lower().endswith('.json'):
+                has_json = True
+                break
+        if has_json:
+            break
+    
+    if not has_json:
+        raise click.BadParameter(f"No JSON schema files found in directory: {value}")
+    
     return value
 
 def validate_directory(ctx, param, value):
@@ -65,46 +94,99 @@ def validate_directory(ctx, param, value):
 
 # CLI Command Line Arguments
 @click.command()
-@click.option(
-    "-i",
-    "--input_dir",
-    type=click.Path(exists=True, file_okay=False),  # Type must be an existing directory
-    required=True,  # Required
-    help="Input valid directory path. Directory must not be empty.",
+@click.argument(
+    "input_dir",
+    type=click.Path(exists=True, file_okay=False),
     callback=validate_directory
 )
-@click.option(
-    "-j",
-    "--json_schema",
-    type=click.Path(exists=True),
-    required=True,  # Required
-    help="Input JSON schema path.",
-    callback=validate_json,  # Calls JSON Validation function
+@click.argument(
+    "schema_dir",
+    type=click.Path(exists=True, file_okay=False),
+    callback=validate_schema_directory
 )
 @click.option(
-    "-s", 
+    "-o", 
     "--save", 
-    is_flag=True, # Boolean value
+    is_flag=True,
     help="Saves result to file.")
 
 
-def main(input_dir, json_schema, save):
-    click.echo(f"Directory: {input_dir}")
-    click.echo(f"JSON schema: {json_schema}")
+def main(input_dir, schema_dir, save):
+    click.echo(f"Input directory: {input_dir}")
+    click.echo(f"Schema directory: {schema_dir}")
     click.echo(f"Save:  {save}")
 
-    # Load the JSON schema (already validated by callback)
-    with open(json_schema, 'r', encoding='utf-8') as f:
-        schema = json.load(f)
+    # Load all JSON schemas from the schema directory
+    schemas = []
+    schema_errors = []
+    for root, dirs, files in os.walk(schema_dir):
+        for fname in files:
+            if is_system_file(fname):
+                continue
+            
+            # Check if file is JSON, if not, add error and continue (matching API behavior)
+            if not fname.lower().endswith('.json'):
+                schema_path = os.path.join(root, fname)
+                err = FileValidationError(
+                    ValidationErrorType.INVALID_JSON,
+                    os.path.abspath(schema_path),
+                    "Not a JSON file"
+                )
+                schema_errors.append(err.to_dict())
+                continue
+            
+            schema_path = os.path.join(root, fname)
+            is_valid, error_message = validate_json_format(schema_path)
+            if not is_valid:
+                err = FileValidationError(
+                    ValidationErrorType.INVALID_JSON,
+                    os.path.abspath(schema_path),
+                    f"Invalid JSON schema: {error_message}"
+                )
+                schema_errors.append(err.to_dict())
+                continue
+            
+            try:
+                with open(schema_path, 'r', encoding='utf-8') as f:
+                    schema_data = json.load(f)
+                    schemas.append(schema_data)
+            except Exception as e:
+                err = FileValidationError(
+                    ValidationErrorType.FILE_ACCESS_ERROR,
+                    os.path.abspath(schema_path),
+                    f"Error loading schema: {str(e)}"
+                )
+                schema_errors.append(err.to_dict())
 
-    aggregated_errors = []
+    if schema_errors:
+        output = {"success": False, "errors": schema_errors}
+        click.echo(json.dumps(output, indent=2))
+        return
 
-    # Walk directory and validate each JSON file
+    if not schemas:
+        output = {"success": False, "errors": [{"error": "No valid JSON schemas found in schema directory"}]}
+        click.echo(json.dumps(output, indent=2))
+        return
+
+    # Collect all JSON files from input directory
+    input_data_list = []  # List of (filename, json_data) tuples
+    input_errors = []
+
+    # Walk directory and collect each JSON file
     for root, dirs, files in os.walk(input_dir):
         for fname in files:
             if is_system_file(fname):
                 continue
+            
+            # Check if file is JSON, if not, add error and continue (matching API behavior)
             if not fname.lower().endswith('.json'):
+                file_path = os.path.join(root, fname)
+                err = FileValidationError(
+                    ValidationErrorType.INVALID_JSON,
+                    os.path.abspath(file_path),
+                    "Not a JSON file"
+                )
+                input_errors.append(err.to_dict())
                 continue
 
             file_path = os.path.join(root, fname)
@@ -115,26 +197,67 @@ def main(input_dir, json_schema, save):
                     os.path.abspath(file_path),
                     f"Invalid JSON: {error_message}"
                 )
-                aggregated_errors.append(err.to_dict())
+                input_errors.append(err.to_dict())
                 continue
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+            
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # Use just the filename (not full path) for model detection
+                    input_data_list.append((fname, data))
+            except Exception as e:
+                err = FileValidationError(
+                    ValidationErrorType.FILE_ACCESS_ERROR,
+                    os.path.abspath(file_path),
+                    f"Error loading file: {str(e)}"
+                )
+                input_errors.append(err.to_dict())
 
-            result = pyd_validate(data, schema)   # validate against pydantic model
-            if not result.get("success", False):
-                errors = result.get("errors", [])
-                # Attach filename context to each error
-                for err in errors:
-                    if isinstance(err, dict):
-                        err_with_file = {"file": os.path.abspath(file_path), **err}
-                        aggregated_errors.append(err_with_file)
-                    else:
-                        aggregated_errors.append({"file": os.path.abspath(file_path), "error": str(err)})
+    if input_errors:
+        output = {"success": False, "errors": input_errors}
+        click.echo(json.dumps(output, indent=2))
+        return
 
-    output = {"success": True }
-    if aggregated_errors: # add errors & 'false' to the output
-        output["errors"] = aggregated_errors
-        output["success"] = False
+    if not input_data_list:
+        output = {"success": False, "errors": [{"error": "No valid JSON files found in input directory"}]}
+        click.echo(json.dumps(output, indent=2))
+        return
+
+    # Use bulk_validate to validate all files
+    # Use the input directory name for schema detection (matching API behavior with ZIP filename)
+    dir_basename = os.path.basename(os.path.normpath(input_dir))
+    
+    try:
+        results = bulk_validate(input_data_list, dir_basename, schemas)
+        
+        # Process results to create output format matching API
+        successful_files = []
+        failed_files = []
+        all_errors = []
+        
+        for result in results:
+            filename = result.get("filename", "unknown")
+            if result.get("success", False):
+                successful_files.append(filename)
+            else:
+                failed_files.append(filename)
+                all_errors.append({"filename": filename, "errors": result.get("errors", [])})
+        
+        # Return summary with success status, file lists, errors (matching API format)
+        output = {
+            "success": len(failed_files) == 0,
+            "summary": {
+                "total_files": len(results),
+                "successful": len(successful_files),
+                "failed": len(failed_files)
+            },
+            "successful_files": successful_files,
+            "failed_files": failed_files,
+            "errors": all_errors,
+        }
+        
+    except Exception as e:
+        output = {"success": False, "errors": [{"error": f"Validation failed: {str(e)}"}]}
 
     click.echo(json.dumps(output, indent=2))
 
