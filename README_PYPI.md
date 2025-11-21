@@ -4,7 +4,10 @@ The HSDS validator validates files against the provided Human Services Data Spec
 
 The validator can be accessed via the Command Line Interface (CLI) locally or deployed as an API using Docker. 
 
-python3 -m cli.main <input_directory> <schema_directory> [-o]
+Run `hsds-validate --help` to see option and instructions.
+
+Run 
+hsds-validate <path/to/input-directory> <path/to/schema_directory> [-o]
 
 ### Parameters
 - `<input_directory>`: Path to directory containing JSON files to validate (required)

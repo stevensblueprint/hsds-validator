@@ -10,6 +10,8 @@ Clone the repository: `git clone https://github.com/stevensblueprint/hsds-valida
 
 Switch into the project directory: `cd hsds-validator`
 
+Create a virtual environment: `python -m venv .venv` (powershell) or `python3 -m venv .venv` (bash)
+
 Make sure you have a version of python >= 3.13 and pip installed.
 
 Run `pip install -r requirements.txt`
