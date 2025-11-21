@@ -5,9 +5,9 @@ import zipfile
 import io
 import os
 import tempfile
-from lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
-from lib.validate import bulk_validate
-from lib.error_handling import validate_json_format
+from hsds_validator.lib.error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
+from hsds_validator.lib.validate import bulk_validate
+from hsds_validator.lib.error_handling import validate_json_format
 
 app = FastAPI()
 

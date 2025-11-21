@@ -1,0 +1,15 @@
+{
+  "id": "3d257b44-eff1-4a22-9465-7f96710848bf",
+  "location_id": "",
+  "organization_id": "",
+  "number": "(223) 4567 12534",
+  "extension": "",
+  "type": "voice",
+  "description": "Laundry Line: General information",
+  "languages": [
+    {
+      "id": "a195945f-678c-5ca4-86bc-e7812c215716",
+      "name": "en, es"
+    }
+  ]
+}

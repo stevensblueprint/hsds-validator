@@ -6,7 +6,7 @@ from dydantic import create_model_from_schema
 from pydantic import BaseModel, ValidationError
 import json
 import os
-from lib.models import HSDS_MODELS
+from hsds_validator.lib.models import HSDS_MODELS
 
 def pick_model_to_validate(filename: str):
     """
