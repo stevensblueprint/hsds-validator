@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Tuple, Dict, Any
-from .error_handling_classes import ValidationResult, ValidationErrorType, FileValidationError
+from .error_handling_classes import ValidationResult, ValidationErrorType
 
 def validate_file_exists(filepath: str) -> bool:
     """
