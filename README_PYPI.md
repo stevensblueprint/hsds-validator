@@ -1,8 +1,8 @@
 ## HSDS Validator
 
-The HSDS validator validates provided files against Human Services Data Specification (HSDS), ensuring that they have no extra or missing fields and returns a report if the validation fails.
+The HSDS validator validates files against the provided Human Services Data Specification (HSDS), ensuring that they have no extra or missing fields and returns a report if the validation fails.
 
-The validator will be accessed via the Command Line Interface (CLI) locally or deployed as an API using Docker. 
+The validator can be accessed via the Command Line Interface (CLI) locally or deployed as an API using Docker. 
 
 python3 -m cli.main <input_directory> <schema_directory> [-o]
 
