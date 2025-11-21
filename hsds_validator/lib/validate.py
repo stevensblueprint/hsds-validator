@@ -1,7 +1,7 @@
 from pathlib import Path
 import subprocess
 import tempfile
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Tuple, Type
 from dydantic import create_model_from_schema
 from pydantic import BaseModel, ValidationError
 import json
