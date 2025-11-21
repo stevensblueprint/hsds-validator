@@ -2,14 +2,6 @@ version = 1
 revision = 3
 requires-python = ">=3.13"
 
-[manifest]
-members = [
-    "api",
-    "cli",
-    "hsds-validator",
-    "lib",
-]
-
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -30,38 +22,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f1/b4/636b3b65173d3ce9a38ef5f0522789614e590dab6a8d505340a4efe4c567/anyio-4.10.0.tar.gz", hash = "sha256:3f3fae35c96039744587aa5b8371e7e8e603c0702999535961dd336026973ba6", size = 213252, upload-time = "2025-08-04T08:54:26.451Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6f/12/e5e0282d673bb9746bacfb6e2dba8719989d3660cdb2ea79aee9a9651afb/anyio-4.10.0-py3-none-any.whl", hash = "sha256:60e474ac86736bbfd6f210f7a61218939c318f43f9972497381f1c5e930ed3d1", size = 107213, upload-time = "2025-08-04T08:54:24.882Z" },
-]
-
-[[package]]
-name = "api"
-version = "0.1.0"
-source = { editable = "api" }
-dependencies = [
-    { name = "fastapi" },
-    { name = "lib" },
-    { name = "uvicorn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.116.1" },
-    { name = "lib", editable = "lib" },
-    { name = "uvicorn", specifier = ">=0.35.0" },
-]
-
-[[package]]
-name = "cli"
-version = "0.1.0"
-source = { editable = "cli" }
-dependencies = [
-    { name = "click" },
-    { name = "lib" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "click", specifier = ">=8.2.1" },
-    { name = "lib", editable = "lib" },
 ]
 
 [[package]]
@@ -112,21 +72,37 @@ wheels = [
 name = "hsds-validator"
 version = "0.1.0"
 source = { editable = "." }
+dependencies = [
+    { name = "click" },
+    { name = "pydantic" },
+]
 
 [package.optional-dependencies]
+all = [
+    { name = "click" },
+    { name = "fastapi" },
+    { name = "uvicorn" },
+]
 api = [
     { name = "fastapi" },
-    { name = "pydantic" },
     { name = "uvicorn" },
+]
+cli = [
+    { name = "click" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "fastapi", marker = "extra == 'api'" },
-    { name = "pydantic", marker = "extra == 'api'" },
-    { name = "uvicorn", marker = "extra == 'api'" },
+    { name = "click", specifier = ">=8.2.1" },
+    { name = "click", marker = "extra == 'all'", specifier = ">=8.2.1" },
+    { name = "click", marker = "extra == 'cli'", specifier = ">=8.2.1" },
+    { name = "fastapi", marker = "extra == 'all'", specifier = ">=0.116.1" },
+    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.116.1" },
+    { name = "pydantic", specifier = ">=2.11.7" },
+    { name = "uvicorn", marker = "extra == 'all'", specifier = ">=0.35.0" },
+    { name = "uvicorn", marker = "extra == 'api'", specifier = ">=0.35.0" },
 ]
-provides-extras = ["api"]
+provides-extras = ["api", "cli", "all"]
 
 [[package]]
 name = "idna"
@@ -136,17 +112,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442, upload-time = "2024-09-15T18:07:37.964Z" },
 ]
-
-[[package]]
-name = "lib"
-version = "0.1.0"
-source = { editable = "lib" }
-dependencies = [
-    { name = "pydantic" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.11.7" }]
 
 [[package]]
 name = "pydantic"

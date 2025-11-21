@@ -6,28 +6,33 @@ authors = [
 ]
 description = "Verifying provided files comply with HSDS specification."
 requires-python = ">=3.13"
-dependencies = []
-readme="README.md"
+dependencies = [
+    "pydantic>=2.11.7",
+    "click>=8.2.1",
+]
+readme = "README.md"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv.workspace]
-members = [
-    "api",
-    "cli",
-    "lib",
-]
-
-[tool.uv.sources]
-api = { workspace = true }
-cli = { workspace = true }
-lib = { workspace = true }
-
 [tool.hatch.build.targets.wheel]
-packages = ["api", "cli", "lib"]
+packages = ["hsds_validator"]
 
 [project.optional-dependencies]
-api = ["fastapi", "uvicorn", "pydantic"]
+api = [
+    "fastapi>=0.116.1",
+    "uvicorn>=0.35.0",
+]
+cli = [
+    "click>=8.2.1",
+]
+all = [
+    "fastapi>=0.116.1",
+    "uvicorn>=0.35.0",
+    "click>=8.2.1",
+]
 
+[project.scripts]
+hsds-validate = "hsds_validator.cli.main:main"
+hsds-api = "hsds_validator.api.main:main"
