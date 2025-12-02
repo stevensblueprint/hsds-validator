@@ -1,6 +1,6 @@
 [project]
 name = "hsds-validator"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
     { name="Stevens Blueprint", email="blueprint@stevens.edu"},
     { name="Alexis Emerson", email="aemerson1@stevens.edu" }

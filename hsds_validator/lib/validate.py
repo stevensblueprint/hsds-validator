@@ -273,33 +273,7 @@ def generate_models(main_schema: Dict[str, Any], all_schemas: List[Dict[str, Any
                 "validate_assignment": True,  # Validate on assignment
                 "use_enum_values": True,  # Use enum values
             }
-        )
-        
-        # # Create models directory
-        # models_dir = Path('models')
-        # models_dir.mkdir(exist_ok=True)
-        
-        # # Save schema to temporary file
-        # with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
-        #     json.dump(cleaned_schema, temp_file, indent=2)
-        #     temp_schema_path = temp_file.name
-            
-        # filename = get_schema_identifier(main_schema) + ".py"
-        
-        # # Generate Python code using datamodel-code-generator
-        # output_file = models_dir / filename
-        # subprocess.run([
-        #     'datamodel-codegen',
-        #     '--input', temp_schema_path,
-        #     '--input-file-type', 'jsonschema',
-        #     '--output', str(output_file)
-        # ], check=True)
-        
-        # # Clean up temporary file
-        # Path(temp_schema_path).unlink()
-        
-        # print(f"Generated Pydantic models saved to {output_file}")
-            
+        )            
         return model_class
         
     except Exception as e:
