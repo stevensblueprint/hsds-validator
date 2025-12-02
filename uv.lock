@@ -104,7 +104,7 @@ wheels = [
 
 [[package]]
 name = "hsds-validator"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -114,8 +114,8 @@ dependencies = [
 
 [package.optional-dependencies]
 all = [
-    { name = "click" },
     { name = "fastapi" },
+    { name = "python-multipart" },
     { name = "uvicorn" },
 ]
 api = [
@@ -123,21 +123,16 @@ api = [
     { name = "python-multipart" },
     { name = "uvicorn" },
 ]
-cli = [
-    { name = "click" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.2.1" },
-    { name = "click", marker = "extra == 'all'", specifier = ">=8.2.1" },
-    { name = "click", marker = "extra == 'cli'", specifier = ">=8.2.1" },
     { name = "dydantic", specifier = ">=0.0.8" },
-    { name = "fastapi", marker = "extra == 'all'", specifier = ">=0.116.1" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.116.1" },
+    { name = "hsds-validator", extras = ["api"], marker = "extra == 'all'" },
+    { name = "hsds-validator", extras = ["cli"], marker = "extra == 'all'" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.11.7" },
     { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.20" },
-    { name = "uvicorn", marker = "extra == 'all'", specifier = ">=0.35.0" },
     { name = "uvicorn", marker = "extra == 'api'", specifier = ">=0.35.0" },
 ]
 provides-extras = ["api", "cli", "all"]

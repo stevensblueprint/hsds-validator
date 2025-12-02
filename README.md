@@ -67,6 +67,6 @@ deactivate                  # Deactivate the virtual environment
 
 ### Example
 ```bash
-python3 -m cli.main examples/program examples/json_schema
-python3 -m cli.main examples/program examples/json_schema -o
+python3 -m hsds_validator.cli.main examples/program examples/json_schema
+python3 -m hsds_validator.cli.main examples/program examples/json_schema -o
 ```

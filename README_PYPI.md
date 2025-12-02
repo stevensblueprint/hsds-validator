@@ -58,7 +58,7 @@ MIT
 
 ## Contact
 
-Stevens Blueprint - blueprint@stevens.edu
+[Stevens Blueprint](https://sitblueprint.com/) - blueprint@stevens.edu
 
 ## About HSDS
 

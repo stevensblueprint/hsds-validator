@@ -2,7 +2,8 @@
 name = "hsds-validator"
 version = "0.1.2"
 authors = [
-    { name="Stevens Blueprint", email="blueprint@stevens.edu"}
+    { name="Stevens Blueprint", email="blueprint@stevens.edu"},
+    { name="Alexis Emerson", email="aemerson1@stevens.edu" }
 ]
 description = "Verifying provided files comply with HSDS specification."
 requires-python = ">=3.13"
@@ -19,6 +20,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["hsds_validator"]
+exclude = [
+    "examples/",
+]
 
 [project.optional-dependencies]
 api = [
@@ -27,12 +31,10 @@ api = [
     "python-multipart>=0.0.20",
 ]
 cli = [
-    "click>=8.2.1",
 ]
 all = [
-    "fastapi>=0.116.1",
-    "uvicorn>=0.35.0",
-    "click>=8.2.1",
+    "hsds-validator[api]",
+    "hsds-validator[cli]",
 ]
 
 [project.scripts]
