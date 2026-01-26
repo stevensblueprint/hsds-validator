@@ -1,9 +1,9 @@
 import click
 import os
 import json
-from lib.error_handling import validate_file_exists, validate_json_format
-from lib.error_handling_classes import FileValidationError, ValidationErrorType
-from lib.validate import bulk_validate
+from hsds_validator.lib.error_handling import validate_file_exists, validate_json_format
+from hsds_validator.lib.error_handling_classes import FileValidationError, ValidationErrorType
+from hsds_validator.lib.validate import bulk_validate
 
 SYSTEM_FILES = {'.DS_Store', 'Thumbs.db', 'desktop.ini'}
 
